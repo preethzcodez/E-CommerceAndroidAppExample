@@ -9,6 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.preethzcodez.ecommerceexample.R;
+import com.preethzcodez.ecommerceexample.pojo.Product;
+
+import java.util.List;
 
 /**
  * Created by Preeth on 1/4/18
@@ -16,23 +19,23 @@ import com.preethzcodez.ecommerceexample.R;
 
 public class ProductListAdapter extends BaseAdapter {
 
-    LayoutInflater inflater;
-    String[] prgmNameList;
+    private LayoutInflater inflater;
+    private List<Product> productList;
 
-    public ProductListAdapter(Context context, String[] prgmNameList) {
-        this.prgmNameList = prgmNameList;
+    public ProductListAdapter(Context context, List<Product> productList) {
+        this.productList = productList;
         inflater = (LayoutInflater) context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return prgmNameList.length;
+        return productList.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return prgmNameList[i];
+        return productList.get(i);
     }
 
     @Override
@@ -50,7 +53,7 @@ public class ProductListAdapter extends BaseAdapter {
         holder.name = (TextView) rowView.findViewById(R.id.name);
         holder.img = (ImageView) rowView.findViewById(R.id.image);
 
-        holder.name.setText(prgmNameList[position]);
+        holder.name.setText(productList.get(position).getName());
         //holder.img.setImageResource(imageId[position]);
 
         return rowView;

@@ -6,6 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.preethzcodez.ecommerceexample.pojo.Category;
+import com.preethzcodez.ecommerceexample.pojo.Product;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Preeth on 1/4/2018.
  */
@@ -219,5 +225,103 @@ public class DB_Handler extends SQLiteOpenHelper {
 
         // return count
         return count;
+    }
+
+    // Get Products List
+    public List<Product> getProductsList() {
+        List<Product> productList = new ArrayList<Product>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + ProductsTable;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Product product = new Product();
+                product.setId(cursor.getInt(cursor.getColumnIndex(ID)));
+                product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+
+                // Adding contact to list
+                productList.add(product);
+            } while (cursor.moveToNext());
+        }
+
+        // return products list
+        return productList;
+    }
+
+    // Get Category List
+    public List<Category> getCategoryList() {
+        List<Category> categoryList = new ArrayList<Category>();
+
+        // Select All Query
+        String selectQuery = "SELECT * FROM " + CategoriesTable;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Category category = new Category();
+                int categoryId = cursor.getInt(cursor.getColumnIndex(ID));
+                String name = cursor.getString(cursor.getColumnIndex(NAME));
+
+                String selectCategory = "SELECT  * FROM " + SubCategoriesMappingTable + " WHERE " + SUB_ID + "=?";
+                Cursor c = db.rawQuery(selectCategory, new String[]{String.valueOf(categoryId)});
+                if (!c.moveToFirst()) {
+                    category.setId(categoryId);
+                    category.setName(name);
+
+                    // Adding category to list
+                    categoryList.add(category);
+                }
+                c.close();
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // return category list
+        return categoryList;
+    }
+
+    // Get Subcategory By Category Id
+    public List<Category> getSubcategoryList(int id)
+    {
+        List<Category> subcategoryList = new ArrayList<Category>();
+
+        // Select Subcategories
+        String selectQuery = "SELECT  "+SUB_ID+" FROM " + SubCategoriesMappingTable + " WHERE "+CAT_ID+"=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Category category = new Category();
+                category.setId(cursor.getInt(cursor.getColumnIndex(SUB_ID)));
+
+                String selectSubCategory = "SELECT  "+NAME+" FROM " + CategoriesTable + " WHERE " + ID + "= ?";
+                Cursor c = db.rawQuery(selectSubCategory, new String[]{String.valueOf(category.getId())});
+                if (c.moveToFirst()) {
+                    do {
+                        category.setName(c.getString(c.getColumnIndex(NAME)));
+                    } while (c.moveToNext());
+
+                    // Adding category to list
+                    subcategoryList.add(category);
+                }
+                c.close();
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // return category list
+        return subcategoryList;
     }
 }

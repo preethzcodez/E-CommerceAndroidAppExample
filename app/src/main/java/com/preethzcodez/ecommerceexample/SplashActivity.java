@@ -15,8 +15,6 @@ import com.preethzcodez.ecommerceexample.pojo.Variant;
 import com.preethzcodez.ecommerceexample.webservice.RetrofitBuilder;
 import com.preethzcodez.ecommerceexample.webservice.RetrofitInterface;
 
-import org.json.JSONObject;
-
 import java.util.List;
 
 import okhttp3.OkHttpClient;
@@ -142,31 +140,33 @@ public class SplashActivity extends AppCompatActivity {
                 // Get Products Rank List
                 List<ProductRank> productRankList = rankingList.get(i).getProducts();
                 for (int j = 0; j < productRankList.size(); j++) {
-                    switch (j) {
-                        case 0: // Most Viewed Products
-                            int viewCount = productRankList.get(j).getViewCount();
+                    try {
+                        switch (j) {
+                            case 0: // Most Viewed Products
+                                int viewCount = productRankList.get(j).getViewCount();
 
-                            // update product table
-                            db_handler.updateCounts(DB_Handler.VIEW_COUNT, viewCount);
-                            break;
+                                // update product table
+                                db_handler.updateCounts(DB_Handler.VIEW_COUNT, viewCount);
+                                break;
 
-                        case 1: // Most Ordered Products
-                            int orderCount = productRankList.get(j).getOrderCount();
+                            case 1: // Most Ordered Products
+                                int orderCount = productRankList.get(j).getOrderCount();
 
-                            // update product table
-                            db_handler.updateCounts(DB_Handler.ORDER_COUNT, orderCount);
-                            break;
+                                // update product table
+                                db_handler.updateCounts(DB_Handler.ORDER_COUNT, orderCount);
+                                break;
 
-                        case 2: // Most Shared Products
-                            int shareCount = productRankList.get(j).getShares();
+                            case 2: // Most Shared Products
+                                int shareCount = productRankList.get(j).getShares();
 
-                            // update product table
-                            db_handler.updateCounts(DB_Handler.SHARE_COUNT, shareCount);
-                            break;
+                                // update product table
+                                db_handler.updateCounts(DB_Handler.SHARE_COUNT, shareCount);
+                                break;
+                        }
+                    } catch (Exception ignore) {
                     }
                 }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }

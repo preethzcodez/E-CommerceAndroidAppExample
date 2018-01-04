@@ -10,6 +10,10 @@ import android.widget.GridView;
 
 import com.preethzcodez.ecommerceexample.R;
 import com.preethzcodez.ecommerceexample.adapters.ProductListAdapter;
+import com.preethzcodez.ecommerceexample.database.DB_Handler;
+import com.preethzcodez.ecommerceexample.pojo.Product;
+
+import java.util.List;
 
 /**
  * Created by Preeth on 1/3/2018.
@@ -25,9 +29,12 @@ public class Products extends Fragment {
         View view = inflater.inflate(R.layout.product_list, container, false);
 
         // load products
-        String [] prgmNameList={"Let Us C","c++","JAVA","Jsp","Microsoft .Net","Android","PHP","Jquery","JavaScript"};
+        DB_Handler db_handler = new DB_Handler(getActivity());
+        List<Product> productList = db_handler.getProductsList();
+
+        // fill gridview with data
         GridView gv=(GridView) view.findViewById(R.id.productsGrid);
-        gv.setAdapter(new ProductListAdapter(getActivity(), prgmNameList));
+        gv.setAdapter(new ProductListAdapter(getActivity(), productList));
 
         return view;
 

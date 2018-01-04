@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import com.preethzcodez.ecommerceexample.fragments.Categories;
 import com.preethzcodez.ecommerceexample.fragments.Products;
 
 public class MainActivity extends AppCompatActivity {
@@ -19,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.content, new Products());
+        ft.replace(R.id.content, new Categories());
         ft.commit();
        /* // initialize bottom navigation view
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
