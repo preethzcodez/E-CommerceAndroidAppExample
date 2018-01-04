@@ -12,7 +12,7 @@ public class Ranking {
     private String ranking;
     @SerializedName("products")
     @Expose
-    private List<Product_> products = null;
+    private List<ProductRank> products = null;
 
     public String getRanking() {
         return ranking;
@@ -22,11 +22,11 @@ public class Ranking {
         this.ranking = ranking;
     }
 
-    public List<Product_> getProducts() {
+    public List<ProductRank> getProducts() {
         return products;
     }
 
-    public void setProducts(List<Product_> products) {
+    public void setProducts(List<ProductRank> products) {
         this.products = products;
     }
 

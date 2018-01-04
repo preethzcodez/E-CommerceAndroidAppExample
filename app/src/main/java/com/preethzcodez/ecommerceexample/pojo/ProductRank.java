@@ -4,7 +4,7 @@ package com.preethzcodez.ecommerceexample.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Product_ {
+public class ProductRank {
 
     @SerializedName("id")
     @Expose

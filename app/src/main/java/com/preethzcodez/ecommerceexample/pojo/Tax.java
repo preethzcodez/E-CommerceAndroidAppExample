@@ -11,7 +11,7 @@ public class Tax {
     private String name;
     @SerializedName("value")
     @Expose
-    private Integer value;
+    private Double value;
 
     public String getName() {
         return name;
@@ -21,11 +21,11 @@ public class Tax {
         this.name = name;
     }
 
-    public Integer getValue() {
+    public Double getValue() {
         return value;
     }
 
-    public void setValue(Integer value) {
+    public void setValue(Double value) {
         this.value = value;
     }
 

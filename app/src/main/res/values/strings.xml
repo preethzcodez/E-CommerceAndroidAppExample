@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">ECommerceExample</string>
+    <string name="splash_text">E-Commerce Shopping</string>
+    
+    <!-- Error Messages -->
+    <string name="NoInternet">No Internet</string>
+    <string name="Error500">Error: Something Went Wrong</string>
 </resources>
