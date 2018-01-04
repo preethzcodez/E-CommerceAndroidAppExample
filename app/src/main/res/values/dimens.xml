@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="SplashText">24sp</dimen>
+    <dimen name="ProductImageHeight">200dp</dimen>
+    <dimen name="ProductTitle">14sp</dimen>
+    <dimen name="ProductPrice">16sp</dimen>
+    <dimen name="ProductWishIconSize">48dp</dimen>
+    <dimen name="defaultMargin">8dp</dimen>
+    <dimen name="gridBorderWidth">1dp</dimen>
 </resources>

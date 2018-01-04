@@ -5,4 +5,10 @@
     <!-- Error Messages -->
     <string name="NoInternet">No Internet</string>
     <string name="Error500">Error: Something Went Wrong</string>
+
+    <!-- Bottom Navigation Titles -->
+    <string name="TitleCategories">Categories</string>
+    <string name="TitleShortlist">Wish List</string>
+    <string name="TitleCart">Cart</string>
+    <string name="TitleAccount">Account</string>
 </resources>

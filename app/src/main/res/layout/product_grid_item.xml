@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:background="@color/white"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/image"
+        android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/ProductImageHeight" />
+
+    <ImageView
+        android:layout_width="@dimen/ProductWishIconSize"
+        android:layout_marginRight="@dimen/defaultMargin"
+        android:layout_alignParentRight="true"
+        android:layout_height="@dimen/ProductWishIconSize" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_marginLeft="@dimen/defaultMargin"
+        android:textSize="@dimen/ProductTitle"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:textColor="@color/black"
+        android:text="Hai"
+        android:maxLines="1"
+        android:layout_marginRight="@dimen/defaultMargin"
+        android:singleLine="true"
+        android:layout_below="@+id/image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_below="@+id/name"
+        android:textColor="@color/black"
+        android:layout_marginLeft="@dimen/defaultMargin"
+        android:text="72,000gffdgtfgddgfdfgfgfffgffgfd"
+        android:layout_marginRight="@dimen/defaultMargin"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="@dimen/defaultMargin"
+        android:textSize="@dimen/ProductPrice"
+        android:layout_height="wrap_content" />
+    </RelativeLayout>
+</RelativeLayout>
