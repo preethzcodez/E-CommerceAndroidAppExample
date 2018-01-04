@@ -29,4 +29,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.android.support:design:27.0.2'
+    compile 'de.hdodenhof:circleimageview:2.2.0'
+    compile 'com.aurelhubert:ahbottomnavigation:2.1.0'
 }

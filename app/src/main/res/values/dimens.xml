@@ -5,8 +5,9 @@
     <dimen name="ProductTitle">14sp</dimen>
     <dimen name="ProductPrice">16sp</dimen>
     <dimen name="ProductWishIconSize">48dp</dimen>
-    <dimen name="CategoryTitleSize">20sp</dimen>
+    <dimen name="CategoryTitleSize">16sp</dimen>
     <dimen name="SubCategorySize">14sp</dimen>
+    <dimen name="SubCategoryImageSize">64sp</dimen>
     <dimen name="defaultMargin">8dp</dimen>
     <dimen name="gridBorderWidth">1dp</dimen>
 </resources>

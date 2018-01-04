@@ -1,12 +1,15 @@
 package com.preethzcodez.ecommerceexample.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.preethzcodez.ecommerceexample.R;
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
@@ -49,7 +52,7 @@ public class SubcategoryGridAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup viewGroup) {
+    public View getView(final int position, View view, ViewGroup viewGroup) {
         Holder holder = new Holder();
         View rowView;
 
@@ -59,10 +62,21 @@ public class SubcategoryGridAdapter extends BaseAdapter {
         holder.category.setText(subCategoryList.get(position).getName());
         //holder.img.setImageResource(imageId[position]);
 
+        holder.gridItemLayout = (RelativeLayout) rowView.findViewById(R.id.gridItemLayouut);
+        holder.gridItemLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("ID:", String.valueOf(subCategoryList.get(position).getId()));
+                Log.i("Name:",subCategoryList.get(position).getName());
+                Toast.makeText(context,"clicked",Toast.LENGTH_LONG).show();
+            }
+        });
+
         return rowView;
     }
 
     public class Holder {
         TextView category;
+        RelativeLayout gridItemLayout;
     }
 }
