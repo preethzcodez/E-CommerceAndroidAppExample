@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     // call products fragment
     private void callProductsFragment() {
         // get product list
-        List<Product> productList = db_handler.getProductsList();
+        List<Product> productList = db_handler.getProductsList(0);
 
         Bundle args = new Bundle();
         args.putSerializable(Constants.PDT_KEY, (Serializable) productList);

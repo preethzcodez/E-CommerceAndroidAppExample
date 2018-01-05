@@ -121,6 +121,11 @@
 
                 <ImageView
                     android:id="@+id/minus"
+                    android:focusableInTouchMode="false"
+                    android:focusable="true"
+                    android:clickable="true"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_minus_circle_outline_grey600_18dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 
@@ -130,12 +135,17 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/defaultMargin"
                     android:layout_marginRight="@dimen/defaultMargin"
-                    android:text="2"
+                    android:text="1"
                     android:textColor="@color/black"
                     android:textSize="@dimen/ProductPrice" />
 
                 <ImageView
                     android:id="@+id/plus"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="false"
+                    android:src="@drawable/ic_plus_circle_outline_grey600_18dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>

@@ -11,4 +11,9 @@
     <string name="TitleCategories">Categories</string>
     <string name="TitleShortlist">Wish List</string>
     <string name="TitleAccount">Account</string>
+
+    <!-- Sort / Filter -->
+    <string name="sort">SORT</string>
+    <string name="filter">FILTER</string>
+    <string name="filters">Filters</string>
 </resources>

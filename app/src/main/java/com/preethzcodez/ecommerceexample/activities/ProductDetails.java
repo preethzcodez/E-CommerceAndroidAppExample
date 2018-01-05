@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,10 +30,12 @@ public class ProductDetails extends AppCompatActivity {
     String selectedSize = null;
     String selectedColor = null;
     String selectedItemPrice = null;
+    int selectedItemQuantity = 1;
 
     LinearLayout colorParentLay;
     FlowLayout colorsLay;
-    TextView Price;
+    TextView Price, quantityValue;
+    ImageView minus, plus;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class ProductDetails extends AppCompatActivity {
 
         setIds();
         setValues();
+        setQuantityUpdateListeners();
     }
 
     // Set Ids
@@ -55,6 +59,9 @@ public class ProductDetails extends AppCompatActivity {
         colorParentLay = (LinearLayout) findViewById(R.id.colorParentLay);
         colorsLay = (FlowLayout) findViewById(R.id.colorsLay);
         Price = (TextView) findViewById(R.id.price);
+        quantityValue = (TextView) findViewById(R.id.quantityValue);
+        minus = (ImageView) findViewById(R.id.minus);
+        plus = (ImageView) findViewById(R.id.plus);
     }
 
     // Set Values
@@ -185,5 +192,28 @@ public class ProductDetails extends AppCompatActivity {
         } catch (NullPointerException e) {
             colorParentLay.setVisibility(View.GONE);
         }
+    }
+
+    // Quantity Update Listeners
+    private void setQuantityUpdateListeners() {
+        // Decrement Listener
+        minus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (selectedItemQuantity != 1) {
+                    selectedItemQuantity--;
+                    quantityValue.setText(String.valueOf(selectedItemQuantity));
+                }
+            }
+        });
+
+        // Increment Listener
+        plus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                selectedItemQuantity++;
+                quantityValue.setText(String.valueOf(selectedItemQuantity));
+            }
+        });
     }
 }

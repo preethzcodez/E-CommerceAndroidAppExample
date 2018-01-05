@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_heart_grey600_24dp" android:state_empty="true">  </item>
+    <item android:drawable="@drawable/ic_plus_circle_outline_grey600_18dp" android:state_expanded="true"></item>
+    <item android:drawable="@drawable/ic_heart_grey600_24dp"></item>
+</selector>

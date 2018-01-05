@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:minHeight="40dp"
+        android:layout_margin="@dimen/defaultMargin"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_heart_grey600_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_toRightOf="@+id/icon"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:text="@string/filters"
+            android:textSize="@dimen/CategoryTitleSize"
+            android:layout_marginLeft="@dimen/defaultMargin"
+            android:id="@+id/filterTitle"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <ExpandableListView
+        android:id="@+id/expandableList"
+        android:layout_below="@+id/header"
+        android:groupIndicator="@null"
+        android:layout_above="@+id/bottomLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <TableLayout
+        android:id="@+id/bottomLay"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:stretchColumns="1">
+
+        <TableRow android:background="@color/white">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/halfMargin"
+                android:layout_marginLeft="@dimen/halfMargin"
+                android:layout_marginRight="2dp"
+                android:layout_marginTop="@dimen/halfMargin"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_corner"
+                android:text="Cart" />
+
+            <Button
+                android:id="@+id/apply"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/halfMargin"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="@dimen/halfMargin"
+                android:layout_marginTop="@dimen/halfMargin"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_corner"
+                android:text="Buy" />
+        </TableRow>
+    </TableLayout>
+</RelativeLayout>

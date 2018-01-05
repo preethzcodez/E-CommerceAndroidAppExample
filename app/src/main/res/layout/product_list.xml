@@ -1,13 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="@color/border"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/border">
+
+    <TableLayout
+        android:id="@+id/sortFilter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/defaultMargin"
+        android:layout_marginRight="@dimen/defaultMargin"
+        android:layout_marginTop="@dimen/defaultMargin"
+        android:background="@drawable/rounded_corner">
+
+        <TableRow>
+
+            <RelativeLayout
+                android:id="@+id/sortLay"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/defaultMargin"
+                android:layout_marginRight="@dimen/halfMargin"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true">
+
+                    <TextView
+                        android:id="@+id/sort"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="@string/sort"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sortMain" />
+
+                    <TextView
+                        android:id="@+id/sortBy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/sort"
+                        android:layout_marginTop="@dimen/halfMargin"
+                        android:text="@string/filter"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/sortSub" />
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:id="@+id/filterLay"
+                android:focusableInTouchMode="false"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/halfMargin"
+                android:layout_marginRight="@dimen/defaultMargin"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true">
+
+                    <ImageView
+                        android:id="@+id/filterIcon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_heart_grey600_24dp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/defaultMargin"
+                        android:layout_toRightOf="@+id/filterIcon"
+                        android:text="@string/filter"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/filter" />
+                </RelativeLayout>
+            </RelativeLayout>
+        </TableRow>
+    </TableLayout>
 
     <GridView
         android:id="@+id/productsGrid"
-        android:numColumns="2"
-        android:horizontalSpacing="@dimen/gridBorderWidth"
-        android:verticalSpacing="@dimen/gridBorderWidth"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/sortFilter"
+        android:horizontalSpacing="@dimen/gridBorderWidth"
+        android:numColumns="2"
+        android:verticalSpacing="@dimen/gridBorderWidth" />
+
+    <FrameLayout
+        android:id="@+id/filterFrame"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>

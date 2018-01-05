@@ -9,13 +9,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.preethzcodez.ecommerceexample.pojo.Category;
 import com.preethzcodez.ecommerceexample.pojo.Product;
 import com.preethzcodez.ecommerceexample.pojo.Tax;
-import com.preethzcodez.ecommerceexample.pojo.Variant;
 import com.preethzcodez.ecommerceexample.utils.Util;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 import static com.preethzcodez.ecommerceexample.utils.Util.formatDouble;
 
@@ -57,7 +55,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
     // Table Names Static Variables
     private static final String UserTable = "user_details";
-    private static final String CategoriesTable = "categories";
+    private static final String CategoriesTable = "listview";
     private static final String SubCategoriesMappingTable = "subcategories_mapping";
     private static final String ProductsTable = "products";
     private static final String VariantsTable = "variants";
@@ -211,7 +209,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     }
 
     // Update View / Share / Order Counts
-    public void updateCounts(String COL_NAME, int count) {
+    public void updateCounts(String COL_NAME, int count, int id) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -219,7 +217,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
         // updating row
         db.update(ProductsTable, values, ID + " = ?",
-                new String[]{String.valueOf(count)});
+                new String[]{String.valueOf(id)});
         db.close();
     }
 
@@ -237,10 +235,28 @@ public class DB_Handler extends SQLiteOpenHelper {
     }
 
     // Get Products List
-    public List<Product> getProductsList() {
+    public List<Product> getProductsList(int sortById) {
         List<Product> productList = new ArrayList<Product>();
-        // Select All Query
-        String selectQuery = "SELECT  * FROM " + ProductsTable;
+
+        // Create Query According To Sort By
+        String selectQuery = null;
+        switch (sortById) {
+            case 0: // Most Recent
+                selectQuery = "SELECT  * FROM " + ProductsTable + " ORDER BY date(" + DATE + ") DESC";
+                break;
+
+            case 1: // Most Orders
+                selectQuery = "SELECT  * FROM " + ProductsTable + " ORDER BY " + ORDER_COUNT + " DESC";
+                break;
+
+            case 2: // Most Shares
+                selectQuery = "SELECT  * FROM " + ProductsTable + " ORDER BY " + SHARE_COUNT + " DESC";
+                break;
+
+            case 3: // Most Viewed
+                selectQuery = "SELECT  * FROM " + ProductsTable + " ORDER BY " + VIEW_COUNT + " DESC";
+                break;
+        }
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -251,10 +267,98 @@ public class DB_Handler extends SQLiteOpenHelper {
                 Product product = new Product();
                 product.setId(cursor.getInt(cursor.getColumnIndex(ID)));
                 product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+                int ct = cursor.getInt(cursor.getColumnIndex(SHARE_COUNT));
 
                 // Adding contact to list
                 productList.add(product);
             } while (cursor.moveToNext());
+        }
+
+        // return products list
+        return productList;
+    }
+
+    // Get Products List By Selected Filters
+    public List<Product> getProductsListByFilter(int sortById, List<String> sizes, List<String> colors) {
+        List<String> productIdList = new ArrayList<>();
+        List<Product> productList = new ArrayList<Product>();
+
+        // Create Query According To Filter
+        String selectQuery = "SELECT DISTINCT "+PDT_ID+" FROM " + VariantsTable;
+        try {
+            if (sizes.size() > 0) {
+                String inClauseSizes = Util.getInClause(sizes);
+                selectQuery = selectQuery + " WHERE " + SIZE + " IN " + inClauseSizes;
+            }
+        } catch (Exception ignore) {
+        }
+
+        try {
+            if (colors.size() > 0) {
+                String inClauseColors = Util.getInClause(colors);
+                if (sizes.size() > 0) {
+                    selectQuery = selectQuery + " AND " + COLOR + " IN "+ inClauseColors;
+                } else {
+                    selectQuery = selectQuery + " WHERE " + COLOR + " IN "+ inClauseColors;
+                }
+            }
+        } catch (Exception ignore) {
+        }
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndex(PDT_ID));
+
+                // Adding product id to list
+                productIdList.add(String.valueOf(id));
+            } while (cursor.moveToNext());
+        }
+
+        try
+        {
+            if(productIdList.size() > 0)
+            {
+                String inClause = Util.getInClause(productIdList);
+                selectQuery = "SELECT  * FROM " + ProductsTable + " WHERE "+ID+" IN "+inClause;
+                switch (sortById) {
+                    case 0: // Most Recent
+                        selectQuery = selectQuery + " ORDER BY date(" + DATE + ") DESC";
+                        break;
+
+                    case 1: // Most Orders
+                        selectQuery = selectQuery + " ORDER BY " + ORDER_COUNT + " DESC";
+                        break;
+
+                    case 2: // Most Shares
+                        selectQuery = selectQuery + " ORDER BY " + SHARE_COUNT + " DESC";
+                        break;
+
+                    case 3: // Most Viewed
+                        selectQuery = selectQuery + " ORDER BY " + VIEW_COUNT + " DESC";
+                        break;
+                }
+
+                cursor = db.rawQuery(selectQuery, null);
+
+                // looping through all rows and adding to list
+                if (cursor.moveToFirst()) {
+                    do {
+                        Product product = new Product();
+                        product.setId(cursor.getInt(cursor.getColumnIndex(ID)));
+                        product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+
+                        // Adding product to list
+                        productList.add(product);
+                    } while (cursor.moveToNext());
+                }
+            }
+        }
+        catch (Exception ignore){
+
         }
 
         // return products list
@@ -517,5 +621,55 @@ public class DB_Handler extends SQLiteOpenHelper {
         db.close();
 
         return "Rs." + formatDouble(price);
+    }
+
+    // Get All Colors
+    public List<String> getAllColors() {
+        List<String> colorList = new ArrayList<String>();
+
+        // Select Query
+        String selectQuery = "SELECT DISTINCT " + COLOR + " FROM " + VariantsTable;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                String color = cursor.getString(cursor.getColumnIndex(COLOR));
+                colorList.add(color);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // return color list
+        return colorList;
+    }
+
+    // Get All Sizes
+    public List<String> getAllSizes() {
+        List<String> sizeList = new ArrayList<String>();
+
+        // Select Query
+        String selectQuery = "SELECT DISTINCT " + SIZE + " FROM " + VariantsTable;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                String size = cursor.getString(cursor.getColumnIndex(SIZE));
+                if (size != null && !size.equalsIgnoreCase("null")) {
+                    sizeList.add(size);
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // return size list
+        return sizeList;
     }
 }

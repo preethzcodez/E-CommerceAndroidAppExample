@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
 import com.preethzcodez.ecommerceexample.pojo.Category;
@@ -141,32 +142,34 @@ public class SplashActivity extends AppCompatActivity {
                 List<ProductRank> productRankList = rankingList.get(i).getProducts();
                 for (int j = 0; j < productRankList.size(); j++) {
                     try {
-                        switch (j) {
+                        int id = productRankList.get(j).getId();
+                        switch (i) {
                             case 0: // Most Viewed Products
                                 int viewCount = productRankList.get(j).getViewCount();
 
                                 // update product table
-                                db_handler.updateCounts(DB_Handler.VIEW_COUNT, viewCount);
+                                db_handler.updateCounts(DB_Handler.VIEW_COUNT, viewCount, id);
                                 break;
 
                             case 1: // Most Ordered Products
                                 int orderCount = productRankList.get(j).getOrderCount();
 
                                 // update product table
-                                db_handler.updateCounts(DB_Handler.ORDER_COUNT, orderCount);
+                                db_handler.updateCounts(DB_Handler.ORDER_COUNT, orderCount, id);
                                 break;
 
                             case 2: // Most Shared Products
                                 int shareCount = productRankList.get(j).getShares();
 
                                 // update product table
-                                db_handler.updateCounts(DB_Handler.SHARE_COUNT, shareCount);
+                                db_handler.updateCounts(DB_Handler.SHARE_COUNT, shareCount, id);
                                 break;
                         }
                     } catch (Exception ignore) {
                     }
                 }
             }
+            Log.i("Success","---");
         } catch (Exception e) {
             e.printStackTrace();
         }
