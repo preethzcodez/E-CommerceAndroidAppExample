@@ -1,14 +1,17 @@
 package com.preethzcodez.ecommerceexample.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.preethzcodez.ecommerceexample.R;
+import com.preethzcodez.ecommerceexample.activities.ProductDetails;
 import com.preethzcodez.ecommerceexample.pojo.Product;
 
 import java.util.List;
@@ -19,10 +22,12 @@ import java.util.List;
 
 public class ProductListAdapter extends BaseAdapter {
 
+    Context context;
     private LayoutInflater inflater;
     private List<Product> productList;
 
     public ProductListAdapter(Context context, List<Product> productList) {
+        this.context = context;
         this.productList = productList;
         inflater = (LayoutInflater) context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -44,7 +49,7 @@ public class ProductListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View view, ViewGroup viewGroup) {
+    public View getView(final int position, View view, ViewGroup viewGroup) {
         // TODO Auto-generated method stub
         Holder holder = new Holder();
         View rowView;
@@ -56,10 +61,22 @@ public class ProductListAdapter extends BaseAdapter {
         holder.name.setText(productList.get(position).getName());
         //holder.img.setImageResource(imageId[position]);
 
+        // Product Item Click
+        holder.itemLay = (RelativeLayout) rowView.findViewById(R.id.itemLay);
+        holder.itemLay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, ProductDetails.class);
+                intent.putExtra("ProductId",productList.get(position).getId());
+                context.startActivity(intent);
+            }
+        });
+
         return rowView;
     }
 
     public class Holder {
+        RelativeLayout itemLay;
         TextView name, price;
         ImageView img, wishIcon;
     }

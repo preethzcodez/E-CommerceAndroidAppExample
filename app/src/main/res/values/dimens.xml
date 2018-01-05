@@ -10,4 +10,5 @@
     <dimen name="SubCategoryImageSize">64sp</dimen>
     <dimen name="defaultMargin">8dp</dimen>
     <dimen name="gridBorderWidth">1dp</dimen>
+    <dimen name="halfMargin">4dp</dimen>
 </resources>

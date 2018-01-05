@@ -103,7 +103,7 @@ public class SplashActivity extends AppCompatActivity {
                     Double TaxValue = productList.get(j).getTax().getValue();
 
                     // insert products into local DB
-                    db_handler.insertProducts(ProductID, ProductName, Date, TaxName, TaxValue);
+                    db_handler.insertProducts(ProductID, CategoryID, ProductName, Date, TaxName, TaxValue);
 
                     // Get Variants
                     List<Variant> variantList = productList.get(j).getVariants();

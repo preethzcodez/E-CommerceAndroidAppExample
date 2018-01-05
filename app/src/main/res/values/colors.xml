@@ -5,6 +5,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>
-    <color name="border">#BDBDBD</color>
+    <color name="border">#f1f5f7</color>
     <color name="nav_inactive">#757575</color>
+    <color name="stroke">#e0e3e4</color>
 </resources>

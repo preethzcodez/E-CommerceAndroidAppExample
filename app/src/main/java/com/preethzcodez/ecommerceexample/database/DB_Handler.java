@@ -8,9 +8,16 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.preethzcodez.ecommerceexample.pojo.Category;
 import com.preethzcodez.ecommerceexample.pojo.Product;
+import com.preethzcodez.ecommerceexample.pojo.Tax;
+import com.preethzcodez.ecommerceexample.pojo.Variant;
+import com.preethzcodez.ecommerceexample.utils.Util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+
+import static com.preethzcodez.ecommerceexample.utils.Util.formatDouble;
 
 /**
  * Created by Preeth on 1/4/2018.
@@ -87,6 +94,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     // Create Products Table
     private static final String CREATE_PRODUCTS_TABLE = "CREATE TABLE " + ProductsTable + "("
             + ID + " INTEGER PRIMARY KEY,"
+            + CAT_ID + " INTEGER NOT NULL,"
             + NAME + " TEXT NOT NULL,"
             + DATE + " TEXT NOT NULL,"
             + TAX_NAME + " TEXT NOT NULL,"
@@ -155,11 +163,12 @@ public class DB_Handler extends SQLiteOpenHelper {
     }
 
     // Insert Products
-    public void insertProducts(int id, String name, String date, String tax_name, Double tax_value) {
+    public void insertProducts(int id, int cat_id, String name, String date, String tax_name, Double tax_value) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ID, id);
+        values.put(CAT_ID, cat_id);
         values.put(NAME, name);
         values.put(DATE, date);
         values.put(TAX_NAME, tax_name);
@@ -271,7 +280,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
                 String selectCategory = "SELECT  * FROM " + SubCategoriesMappingTable + " WHERE " + SUB_ID + "=?";
                 Cursor c = db.rawQuery(selectCategory, new String[]{String.valueOf(categoryId)});
-                if (!c.moveToFirst()) {
+                if (!c.moveToFirst()) { // don't add if category has a sub category
                     category.setId(categoryId);
                     category.setName(name);
 
@@ -289,12 +298,11 @@ public class DB_Handler extends SQLiteOpenHelper {
     }
 
     // Get Subcategory By Category Id
-    public List<Category> getSubcategoryList(int id)
-    {
+    public List<Category> getSubcategoryList(int id) {
         List<Category> subcategoryList = new ArrayList<Category>();
 
         // Select Subcategories
-        String selectQuery = "SELECT  "+SUB_ID+" FROM " + SubCategoriesMappingTable + " WHERE "+CAT_ID+"=?";
+        String selectQuery = "SELECT  " + SUB_ID + " FROM " + SubCategoriesMappingTable + " WHERE " + CAT_ID + "=?";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
@@ -305,7 +313,7 @@ public class DB_Handler extends SQLiteOpenHelper {
                 Category category = new Category();
                 category.setId(cursor.getInt(cursor.getColumnIndex(SUB_ID)));
 
-                String selectSubCategory = "SELECT  "+NAME+" FROM " + CategoriesTable + " WHERE " + ID + "= ?";
+                String selectSubCategory = "SELECT  " + NAME + " FROM " + CategoriesTable + " WHERE " + ID + "= ?";
                 Cursor c = db.rawQuery(selectSubCategory, new String[]{String.valueOf(category.getId())});
                 if (c.moveToFirst()) {
                     do {
@@ -323,5 +331,191 @@ public class DB_Handler extends SQLiteOpenHelper {
 
         // return category list
         return subcategoryList;
+    }
+
+    // Get Products List By Category
+    public List<Product> getProductsListByCategory(int id) {
+        List<Product> productList = new ArrayList<Product>();
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + ProductsTable + " WHERE " + CAT_ID + "=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Product product = new Product();
+                product.setId(cursor.getInt(cursor.getColumnIndex(ID)));
+                product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+
+                // Adding contact to list
+                productList.add(product);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // return products list
+        return productList;
+    }
+
+    // Get Product Details By Id
+    public Product getProductDetailsById(int id) {
+        Product product = new Product();
+        Tax tax = new Tax();
+
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + ProductsTable + " WHERE " + ID + "=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            product.setId(cursor.getInt(cursor.getColumnIndex(ID)));
+            product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+            tax.setName(cursor.getString(cursor.getColumnIndex(TAX_NAME)));
+            tax.setValue(cursor.getDouble(cursor.getColumnIndex(TAX_VALUE)));
+            product.setTax(tax);
+        }
+        cursor.close();
+        db.close();
+
+        // return product
+        return product;
+    }
+
+    // Get Product Size By Id
+    public List<String> getSizeByProductId(int id) {
+        List<String> sizeList = new ArrayList<String>();
+
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT " + SIZE + " FROM " + VariantsTable + " WHERE " + PDT_ID + "=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                String size = cursor.getString(cursor.getColumnIndex(SIZE));
+                if (size != null && !size.equalsIgnoreCase("null")) {
+                    sizeList.add(size);
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // return size list
+        return sizeList;
+    }
+
+    // Get Product Color By Size And Id
+    public List<String> getColorBySelectedSize(int id, String size) {
+        List<String> colorList = new ArrayList<String>();
+
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT " + COLOR + " FROM " + VariantsTable + " WHERE " + PDT_ID + "=? AND " + SIZE + "=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id), size});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                String color = cursor.getString(cursor.getColumnIndex(COLOR));
+                colorList.add(color);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // return size list
+        return colorList;
+    }
+
+    // Get Product Colors Id
+    public List<String> getProductColorsById(int id) {
+        List<String> colorList = new ArrayList<String>();
+
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT " + COLOR + " FROM " + VariantsTable + " WHERE " + PDT_ID + "=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                String color = cursor.getString(cursor.getColumnIndex(COLOR));
+                colorList.add(color);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // return color list
+        return colorList;
+    }
+
+    // Get Product Price Range By Id
+    public String getProductPriceRangeById(int id) {
+        List<Double> priceList = new ArrayList<>();
+
+        // Select All Query
+        String selectQuery = "SELECT DISTINCT " + PRICE + " FROM " + VariantsTable + " WHERE " + PDT_ID + "=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                String priceString = cursor.getString(cursor.getColumnIndex(PRICE));
+                double price = Double.parseDouble(priceString);
+                priceList.add(price);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        double minimumPrice = Collections.min(priceList);
+        double maximumPrice = Collections.max(priceList);
+
+        if (minimumPrice == maximumPrice) {
+            return "Rs." + formatDouble(maximumPrice);
+        } else {
+            return "Rs." + formatDouble(minimumPrice) + " - Rs." + formatDouble(maximumPrice);
+        }
+    }
+
+    // Get Product Price Range By Id, Size, Color
+    public String getProductPrice(int id, String size, String color) {
+        double price = 0;
+
+        // Select All Query
+        String selectQuery;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor;
+
+        if (size == null) {
+            selectQuery = "SELECT " + PRICE + " FROM " + VariantsTable + " WHERE " + PDT_ID + "=? AND " + COLOR + "=?";
+            cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id), color});
+        } else {
+            selectQuery = "SELECT " + PRICE + " FROM " + VariantsTable + " WHERE " + PDT_ID + "=? AND " + SIZE + "=? AND " + COLOR + "=?";
+            cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id), size, color});
+        }
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            String priceString = cursor.getString(cursor.getColumnIndex(PRICE));
+            price = Double.parseDouble(priceString);
+        }
+        cursor.close();
+        db.close();
+
+        return "Rs." + formatDouble(price);
     }
 }
