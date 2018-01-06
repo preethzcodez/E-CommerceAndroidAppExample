@@ -14,4 +14,6 @@
     <dimen name="sortMain">14sp</dimen>
     <dimen name="sortSub">10sp</dimen>
     <dimen name="filter">14sp</dimen>
+    <dimen name="sort_filter_height">48dp</dimen>
+    <dimen name="product_detail_button">16sp</dimen>
 </resources>

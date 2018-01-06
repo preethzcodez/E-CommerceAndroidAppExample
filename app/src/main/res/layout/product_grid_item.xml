@@ -14,7 +14,8 @@
         android:layout_height="match_parent">
     <ImageView
         android:id="@+id/image"
-        android:background="@color/colorPrimary"
+        android:scaleType="center"
+        android:src="@drawable/ic_image_grey600_36dp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/ProductImageHeight" />
 
@@ -40,11 +41,12 @@
         android:layout_height="wrap_content" />
 
     <TextView
+        android:id="@+id/price"
         android:layout_width="wrap_content"
         android:layout_below="@+id/name"
         android:textColor="@color/black"
         android:layout_marginLeft="@dimen/defaultMargin"
-        android:text="72,000gffdgtfgddgfdfgfgfffgffgfd"
+        android:text="Rs.72,000"
         android:layout_marginRight="@dimen/defaultMargin"
         android:maxLines="1"
         android:singleLine="true"

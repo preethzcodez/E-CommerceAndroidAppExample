@@ -17,7 +17,7 @@
             android:id="@+id/image"
             android:src="@drawable/ic_launcher_background"
             app:civ_border_width="2dp"
-            app:civ_border_color="#FFBDBDBD"
+            app:civ_border_color="@color/circle_border"
             android:layout_centerHorizontal="true"
             android:layout_width="@dimen/SubCategoryImageSize"
             android:layout_height="@dimen/SubCategoryImageSize" />
@@ -29,7 +29,6 @@
             android:layout_below="@+id/image"
             android:textColor="@color/black"
             android:layout_marginLeft="@dimen/defaultMargin"
-            android:text="72,000gffdgtfgddgfdfgfgfffgffgfd"
             android:layout_marginRight="@dimen/defaultMargin"
             android:maxLines="1"
             android:singleLine="true"

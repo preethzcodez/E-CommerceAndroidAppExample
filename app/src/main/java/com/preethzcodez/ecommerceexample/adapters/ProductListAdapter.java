@@ -56,10 +56,10 @@ public class ProductListAdapter extends BaseAdapter {
 
         rowView = inflater.inflate(R.layout.product_grid_item, null);
         holder.name = (TextView) rowView.findViewById(R.id.name);
-        holder.img = (ImageView) rowView.findViewById(R.id.image);
+        holder.price = (TextView) rowView.findViewById(R.id.price);
 
         holder.name.setText(productList.get(position).getName());
-        //holder.img.setImageResource(imageId[position]);
+        holder.price.setText(productList.get(position).getPrice_range());
 
         // Product Item Click
         holder.itemLay = (RelativeLayout) rowView.findViewById(R.id.itemLay);
@@ -78,6 +78,5 @@ public class ProductListAdapter extends BaseAdapter {
     public class Holder {
         RelativeLayout itemLay;
         TextView name, price;
-        ImageView img, wishIcon;
     }
 }

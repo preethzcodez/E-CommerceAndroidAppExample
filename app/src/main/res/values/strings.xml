@@ -16,4 +16,8 @@
     <string name="sort">SORT</string>
     <string name="filter">FILTER</string>
     <string name="filters">Filters</string>
+
+    <!-- Product Detail Page -->
+    <string name="buy">Buy Now</string>
+    <string name="cart">Add To Cart</string>
 </resources>

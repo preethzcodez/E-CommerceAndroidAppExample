@@ -23,6 +23,9 @@ public class Product implements Serializable {
     @SerializedName("tax")
     @Expose
     private Tax tax;
+    @SerializedName("price_range")
+    @Expose
+    private String price_range;
 
     public Integer getId() {
         return id;
@@ -64,4 +67,11 @@ public class Product implements Serializable {
         this.tax = tax;
     }
 
+    public String getPrice_range() {
+        return price_range;
+    }
+
+    public void setPrice_range(String price_range) {
+        this.price_range = price_range;
+    }
 }

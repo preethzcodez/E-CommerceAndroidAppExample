@@ -32,9 +32,9 @@ public class ProductDetails extends AppCompatActivity {
     String selectedItemPrice = null;
     int selectedItemQuantity = 1;
 
-    LinearLayout colorParentLay;
-    FlowLayout colorsLay;
-    TextView Price, quantityValue;
+    LinearLayout colorParentLay, sizeParentLay;
+    FlowLayout colorsLay, sizeLay;
+    TextView price, quantityValue;
     ImageView minus, plus;
 
     @Override
@@ -57,8 +57,10 @@ public class ProductDetails extends AppCompatActivity {
     // Set Ids
     private void setIds() {
         colorParentLay = (LinearLayout) findViewById(R.id.colorParentLay);
+        sizeParentLay = (LinearLayout) findViewById(R.id.sizeParentLay);
         colorsLay = (FlowLayout) findViewById(R.id.colorsLay);
-        Price = (TextView) findViewById(R.id.price);
+        sizeLay = (FlowLayout) findViewById(R.id.sizesLay);
+        price = (TextView) findViewById(R.id.price);
         quantityValue = (TextView) findViewById(R.id.quantityValue);
         minus = (ImageView) findViewById(R.id.minus);
         plus = (ImageView) findViewById(R.id.plus);
@@ -71,10 +73,20 @@ public class ProductDetails extends AppCompatActivity {
         Title.setText(product.getName());
 
         // Size
-        LinearLayout SizeParentLay = (LinearLayout) findViewById(R.id.sizeParentLay);
-        FlowLayout SizeLay = (FlowLayout) findViewById(R.id.sizesLay);
+        List<String> sizeList = db_handler.getSizeByProductId(product.getId());
+        setSizeLayout(sizeList);
+
+        // Color
+        List<String> colorList = db_handler.getProductColorsById(product.getId());
+        setColorLayout(colorList);
+
+        // Price Range
+        price.setText(db_handler.getProductPriceRangeById(product.getId()));
+    }
+
+    private void setSizeLayout(final List<String> sizeList) {
+        sizeLay.removeAllViews();
         try {
-            List<String> sizeList = db_handler.getSizeByProductId(product.getId());
             if (sizeList.size() > 0) {
                 for (int i = 0; i < sizeList.size(); i++) {
                     final TextView size = new TextView(this);
@@ -84,6 +96,19 @@ public class ProductDetails extends AppCompatActivity {
                     } else {
                         size.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_grey));
                     }
+
+                    // Change Border To Blue If Selected
+                    try {
+                        if (selectedSize.equals(sizeList.get(i))) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                size.setBackground(getResources().getDrawable(R.drawable.border_blue));
+                            } else {
+                                size.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_blue));
+                            }
+                        }
+                    } catch (NullPointerException ignore) {
+                    }
+
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         size.setTextColor(getResources().getColor(R.color.black, null));
                     } else {
@@ -101,7 +126,7 @@ public class ProductDetails extends AppCompatActivity {
                             FlowLayout.LayoutParams.WRAP_CONTENT);
                     params.setMargins(margin, margin, 0, 0);
                     size.setLayoutParams(params);
-                    SizeLay.addView(size);
+                    sizeLay.addView(size);
 
                     // Size Click Listener
                     size.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +136,7 @@ public class ProductDetails extends AppCompatActivity {
                             selectedSize = textView.getText().toString();
                             selectedColor = null;
                             selectedItemPrice = null;
+                            setSizeLayout(sizeList); // refresh to set selected
 
                             // Get Color of Selected Size & Set Color Layout
                             List<String> colorList = db_handler.getColorBySelectedSize(product.getId(), selectedSize);
@@ -119,23 +145,16 @@ public class ProductDetails extends AppCompatActivity {
                     });
                 }
             } else {
-                SizeParentLay.setVisibility(View.GONE);
+                sizeParentLay.setVisibility(View.GONE);
                 selectedSize = "-";
             }
         } catch (NullPointerException e) {
-            SizeParentLay.setVisibility(View.GONE);
+            sizeParentLay.setVisibility(View.GONE);
             selectedSize = "-";
         }
-
-        // Color
-        List<String> colorList = db_handler.getProductColorsById(product.getId());
-        setColorLayout(colorList);
-
-        // Price Range
-        Price.setText(db_handler.getProductPriceRangeById(product.getId()));
     }
 
-    private void setColorLayout(List<String> colorList) {
+    private void setColorLayout(final List<String> colorList) {
         colorsLay.removeAllViews();
         try {
             if (colorList.size() > 0) {
@@ -146,6 +165,18 @@ public class ProductDetails extends AppCompatActivity {
                         color.setBackground(getResources().getDrawable(R.drawable.border_grey));
                     } else {
                         color.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_grey));
+                    }
+
+                    // Change Border To Blue If Selected
+                    try {
+                        if (selectedColor.equals(colorList.get(i))) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                                color.setBackground(getResources().getDrawable(R.drawable.border_blue));
+                            } else {
+                                color.setBackgroundDrawable(getResources().getDrawable(R.drawable.border_blue));
+                            }
+                        }
+                    } catch (NullPointerException ignore) {
                     }
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         color.setTextColor(getResources().getColor(R.color.black, null));
@@ -170,17 +201,26 @@ public class ProductDetails extends AppCompatActivity {
                     color.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            TextView textView = (TextView) view;
-                            selectedColor = textView.getText().toString();
 
-                            // Get Selected Item Price
-                            if (selectedSize.equals("-")) { // no size for product
-                                selectedItemPrice = db_handler.getProductPrice(product.getId(), null, selectedColor);
-                                Price.setText(selectedItemPrice);
-                            } else if (selectedSize != null) {
-                                selectedItemPrice = db_handler.getProductPrice(product.getId(), selectedSize, selectedColor);
-                                Price.setText(selectedItemPrice);
-                            } else {
+                            try {
+                                // Get Selected Item Price
+                                if (selectedSize.equals("-") || selectedSize != null) {
+                                    TextView textView = (TextView) view;
+                                    selectedColor = textView.getText().toString();
+
+                                    if (selectedSize.equals("-")) // no size for product
+                                    {
+                                        selectedItemPrice = db_handler.getProductPrice(product.getId(), null, selectedColor);
+                                    } else {
+                                        selectedItemPrice = db_handler.getProductPrice(product.getId(), selectedSize, selectedColor);
+                                    }
+
+                                    price.setText(selectedItemPrice);
+                                    setColorLayout(colorList); // reload to refresh background
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Please Select Size", Toast.LENGTH_LONG).show();
+                                }
+                            } catch (NullPointerException e) {
                                 Toast.makeText(getApplicationContext(), "Please Select Size", Toast.LENGTH_LONG).show();
                             }
                         }

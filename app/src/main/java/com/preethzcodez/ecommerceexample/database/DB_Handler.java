@@ -265,11 +265,15 @@ public class DB_Handler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 Product product = new Product();
-                product.setId(cursor.getInt(cursor.getColumnIndex(ID)));
+                int id = cursor.getInt(cursor.getColumnIndex(ID));
+                product.setId(id);
                 product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
-                int ct = cursor.getInt(cursor.getColumnIndex(SHARE_COUNT));
 
-                // Adding contact to list
+                // Get Price Range
+                String priceRange = getProductPriceRangeById(id);
+                product.setPrice_range(priceRange);
+
+                // Adding product to list
                 productList.add(product);
             } while (cursor.moveToNext());
         }

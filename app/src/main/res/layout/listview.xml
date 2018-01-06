@@ -6,6 +6,6 @@
     android:background="@color/white"
     android:clickable="false"
     android:focusable="false"
-    android:divider="@color/black"
+    android:divider="@color/border"
     android:dividerHeight="@dimen/defaultMargin"
     android:focusableInTouchMode="true" />
