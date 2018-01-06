@@ -16,34 +16,70 @@
         android:layout_centerInParent="true"
         android:layout_margin="@dimen/defaultMargin"
         android:layout_height="wrap_content">
+        <TextView
+            android:text="@string/email"
+            android:textSize="@dimen/reg_title"
+            android:layout_marginRight="@dimen/defaultMargin"
+            android:layout_marginLeft="@dimen/defaultMargin"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
         <EditText
             android:id="@+id/email"
-            android:hint="Email Id"
+            android:hint="@string/email"
             android:singleLine="true"
             android:maxLines="1"
-            android:layout_margin="@dimen/defaultMargin"
+            android:layout_marginRight="@dimen/defaultMargin"
+            android:layout_marginLeft="@dimen/defaultMargin"
             android:inputType="textEmailAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <EditText
-            android:id="@+id/password"
-            android:hint="Password"
-            android:singleLine="true"
-            android:maxLines="1"
-            android:inputType="textPassword"
-            android:layout_margin="@dimen/defaultMargin"
-            android:layout_width="match_parent"
+        <TextView
+            android:text="@string/password"
+            android:textSize="@dimen/reg_title"
+            android:layout_marginLeft="@dimen/defaultMargin"
+            android:layout_marginTop="@dimen/app_default"
+            android:layout_marginRight="@dimen/defaultMargin"
+            android:textColor="@color/black"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:layout_marginLeft="@dimen/defaultMargin"
+            android:layout_marginRight="@dimen/defaultMargin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/password"
+                android:hint="@string/password"
+                android:singleLine="true"
+                android:maxLines="1"
+                android:layout_toLeftOf="@+id/showpassword"
+                android:inputType="textPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:focusableInTouchMode="false"
+                android:focusable="true"
+                android:clickable="true"
+                android:id="@+id/showpassword"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_eye_off_grey600_24dp"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
 
         <Button
             android:id="@+id/signin"
             android:layout_width="match_parent"
-            android:text="Sign In"
+            android:text="@string/signin"
             android:textSize="16sp"
             android:textColor="@color/white"
+            android:layout_marginTop="@dimen/app_default"
+            android:layout_marginRight="@dimen/defaultMargin"
             android:background="@drawable/rounded_corner_blue"
-            android:layout_margin="@dimen/defaultMargin"
+            android:layout_marginLeft="@dimen/defaultMargin"
             android:layout_height="wrap_content" />
     </LinearLayout>
 </RelativeLayout>

@@ -1,5 +1,6 @@
 package com.preethzcodez.ecommerceexample;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,8 +10,15 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.preethzcodez.ecommerceexample.activities.ShoppingCart;
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
+import com.preethzcodez.ecommerceexample.database.SessionManager;
+import com.preethzcodez.ecommerceexample.fragments.Account;
 import com.preethzcodez.ecommerceexample.fragments.Categories;
 import com.preethzcodez.ecommerceexample.fragments.Products;
 import com.preethzcodez.ecommerceexample.pojo.Product;
@@ -23,7 +31,9 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView navigation;
     DB_Handler db_handler;
+    SessionManager sessionManager;
     Toolbar toolbar;
+    int cartCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         db_handler = new DB_Handler(this);
+        sessionManager = new SessionManager(this);
 
         // Set Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -48,6 +59,22 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         callProductsFragment();
+        setToolbarIconsClickListeners();
+    }
+
+    // Set Toolbar Icons Clic Listeners
+    private void setToolbarIconsClickListeners() {
+        ImageView cart = (ImageView) findViewById(R.id.cart);
+        cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (cartCount > 0) {
+                    startActivity(new Intent(getApplicationContext(), ShoppingCart.class));
+                } else {
+                    Toast.makeText(getApplicationContext(), "Cart Is Empty", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     /**
@@ -76,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
                     return true;
 
                 case R.id.nav_account: // User Account
+                    ft.replace(R.id.content, new Account());
+                    ft.commit();
                     return true;
             }
             return false;
@@ -85,9 +114,10 @@ public class MainActivity extends AppCompatActivity {
     // call products fragment
     private void callProductsFragment() {
         // get product list
-        List<Product> productList = db_handler.getProductsList(0);
+        List<Product> productList = db_handler.getProductsList(0, null, null, 0);
 
         Bundle args = new Bundle();
+        args.putInt(Constants.CAT_ID_KEY, 0);
         args.putSerializable(Constants.PDT_KEY, (Serializable) productList);
 
         Products products = new Products();
@@ -97,5 +127,18 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.content, products);
         ft.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Update Cart Count
+        cartCount = db_handler.getCartItemCount(sessionManager.getSessionData(Constants.SESSION_EMAIL));
+        if (cartCount > 0) {
+            TextView count = (TextView) findViewById(R.id.count);
+            count.setVisibility(View.VISIBLE);
+            count.setText(String.valueOf(cartCount));
+        }
     }
 }

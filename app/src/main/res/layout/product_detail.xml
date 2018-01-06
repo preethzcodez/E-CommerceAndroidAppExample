@@ -4,7 +4,11 @@
     android:layout_height="match_parent"
     android:background="@color/border">
 
+    <include android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
+
     <ScrollView
+        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottomLay"
@@ -18,6 +22,7 @@
 
             <ImageView
                 android:id="@+id/image"
+                android:background="@color/stroke"
                 android:layout_width="match_parent"
                 android:layout_height="225dp"
                 android:scaleType="center"
@@ -170,6 +175,7 @@
         <TableRow android:background="@color/white">
 
             <Button
+                android:id="@+id/cartButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/halfMargin"

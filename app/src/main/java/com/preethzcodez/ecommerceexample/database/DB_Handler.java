@@ -5,12 +5,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
+import com.preethzcodez.ecommerceexample.pojo.Cart;
 import com.preethzcodez.ecommerceexample.pojo.Category;
 import com.preethzcodez.ecommerceexample.pojo.Product;
 import com.preethzcodez.ecommerceexample.pojo.Tax;
 import com.preethzcodez.ecommerceexample.pojo.User;
+import com.preethzcodez.ecommerceexample.pojo.Variant;
 import com.preethzcodez.ecommerceexample.utils.Util;
 
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     private static final String ADDRESS_LINE1 = "address_line1";
     private static final String ADDRESS_LINE2 = "address_line2";
     private static final String PIN = "pin";
+    public static final String QUANTITY = "quantity";
     public static final String VIEW_COUNT = "view_count";
     public static final String ORDER_COUNT = "order_count";
     public static final String SHARE_COUNT = "share_count";
@@ -63,6 +65,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     private static final String VariantsTable = "variants";
     private static final String AddressTable = "address_book";
     private static final String OrderHistoryTable = "order_history";
+    private static final String ShoppingCartTable = "shopping_cart";
 
     // Create User Table
     private static final String CREATE_USER_TABLE = "CREATE TABLE " + UserTable + "("
@@ -111,12 +114,21 @@ public class DB_Handler extends SQLiteOpenHelper {
             + PRICE + " TEXT NOT NULL,"
             + PDT_ID + " INTEGER NOT NULL" + ")";
 
-    // Create Variants Table
+    // Create Order History Table
     private static final String CREATE_ORDER_HISTORY_TABLE = "CREATE TABLE " + OrderHistoryTable + "("
             + ID + " INTEGER PRIMARY KEY,"
             + PDT_ID + " INTEGER NOT NULL,"
             + VAR_ID + " INTEGER NOT NULL,"
-            + ADDR_ID + " INTEGER NOT NULL" + ")";
+            + QUANTITY + " INTEGER NOT NULL,"
+            + EMAIL +" TEXT NOT NULL"+")";
+
+    // Create Shopping Cart Table
+    private static final String CREATE_SHOPPING_CART_TABLE = "CREATE TABLE " + ShoppingCartTable + "("
+            + ID + " INTEGER PRIMARY KEY,"
+            + PDT_ID + " INTEGER NOT NULL,"
+            + VAR_ID + " INTEGER NOT NULL,"
+            + QUANTITY + " INTEGER NOT NULL,"
+            + EMAIL + " TEXT NOT NULL" + ")";
 
     public DB_Handler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -132,6 +144,7 @@ public class DB_Handler extends SQLiteOpenHelper {
         db.execSQL(CREATE_SUBCATEGORIES_MAPPING_TABLE);
         db.execSQL(CREATE_ADDRESS_BOOK);
         db.execSQL(CREATE_ORDER_HISTORY_TABLE);
+        db.execSQL(CREATE_SHOPPING_CART_TABLE);
     }
 
     // Upgrading database
@@ -145,6 +158,7 @@ public class DB_Handler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + SubCategoriesMappingTable);
         db.execSQL("DROP TABLE IF EXISTS " + AddressTable);
         db.execSQL("DROP TABLE IF EXISTS " + OrderHistoryTable);
+        db.execSQL("DROP TABLE IF EXISTS " + ShoppingCartTable);
 
         // Create tables again
         onCreate(db);
@@ -298,32 +312,40 @@ public class DB_Handler extends SQLiteOpenHelper {
         return count;
     }
 
-    // Get Products List
-    public List<Product> getProductsList(int sortById) {
+    /*// Get Products List
+    public List<Product> getProductsList(int sortById, int cat_id) {
         List<Product> productList = new ArrayList<Product>();
 
         // Create Query According To Sort By
-        String selectQuery = null;
+        String selectQuery = "SELECT  * FROM " + ProductsTable;
+        if (cat_id > 0) {
+            selectQuery = selectQuery + " WHERE " + CAT_ID + "=?";
+        }
         switch (sortById) {
             case 0: // Most Recent
-                selectQuery = "SELECT  * FROM " + ProductsTable + " ORDER BY date(" + DATE + ") DESC";
+                selectQuery = selectQuery + " ORDER BY date(" + DATE + ") DESC";
                 break;
 
             case 1: // Most Orders
-                selectQuery = "SELECT  * FROM " + ProductsTable + " ORDER BY " + ORDER_COUNT + " DESC";
+                selectQuery = selectQuery + " ORDER BY " + ORDER_COUNT + " DESC";
                 break;
 
             case 2: // Most Shares
-                selectQuery = "SELECT  * FROM " + ProductsTable + " ORDER BY " + SHARE_COUNT + " DESC";
+                selectQuery = selectQuery + " ORDER BY " + SHARE_COUNT + " DESC";
                 break;
 
             case 3: // Most Viewed
-                selectQuery = "SELECT  * FROM " + ProductsTable + " ORDER BY " + VIEW_COUNT + " DESC";
+                selectQuery = selectQuery + " ORDER BY " + VIEW_COUNT + " DESC";
                 break;
         }
 
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = null;
+        if (cat_id > 0) {
+            cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(cat_id)});
+        } else {
+            cursor = db.rawQuery(selectQuery, null);
+        }
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
@@ -341,13 +363,14 @@ public class DB_Handler extends SQLiteOpenHelper {
                 productList.add(product);
             } while (cursor.moveToNext());
         }
+        cursor.close();
 
         // return products list
         return productList;
-    }
+    }*/
 
     // Get Products List By Selected Filters
-    public List<Product> getProductsListByFilter(int sortById, List<String> sizes, List<String> colors) {
+    public List<Product> getProductsList(int sortById, List<String> sizes, List<String> colors, int cat_id) {
         List<String> productIdList = new ArrayList<>();
         List<Product> productList = new ArrayList<Product>();
 
@@ -390,6 +413,9 @@ public class DB_Handler extends SQLiteOpenHelper {
             if (productIdList.size() > 0) {
                 String inClause = Util.getInClause(productIdList);
                 selectQuery = "SELECT  * FROM " + ProductsTable + " WHERE " + ID + " IN " + inClause;
+                if (cat_id > 0) {
+                    selectQuery = selectQuery + " AND " + CAT_ID + "=?";
+                }
                 switch (sortById) {
                     case 0: // Most Recent
                         selectQuery = selectQuery + " ORDER BY date(" + DATE + ") DESC";
@@ -408,14 +434,23 @@ public class DB_Handler extends SQLiteOpenHelper {
                         break;
                 }
 
-                cursor = db.rawQuery(selectQuery, null);
+                if (cat_id > 0) {
+                    cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(cat_id)});
+                } else {
+                    cursor = db.rawQuery(selectQuery, null);
+                }
 
                 // looping through all rows and adding to list
                 if (cursor.moveToFirst()) {
                     do {
                         Product product = new Product();
-                        product.setId(cursor.getInt(cursor.getColumnIndex(ID)));
+                        int id = cursor.getInt(cursor.getColumnIndex(ID));
+                        product.setId(id);
                         product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+
+                        // Get Price Range
+                        String priceRange = getProductPriceRangeById(id);
+                        product.setPrice_range(priceRange);
 
                         // Adding product to list
                         productList.add(product);
@@ -502,7 +537,7 @@ public class DB_Handler extends SQLiteOpenHelper {
         return subcategoryList;
     }
 
-    // Get Products List By Category
+    /*// Get Products List By Category
     public List<Product> getProductsListByCategory(int id) {
         List<Product> productList = new ArrayList<Product>();
         // Select All Query
@@ -527,7 +562,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
         // return products list
         return productList;
-    }
+    }*/
 
     // Get Product Details By Id
     public Product getProductDetailsById(int id) {
@@ -553,6 +588,30 @@ public class DB_Handler extends SQLiteOpenHelper {
 
         // return product
         return product;
+    }
+
+    // Get Variant Details By Id
+    public Variant getVariantDetailsById(int id) {
+        Variant variant = new Variant();
+
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + VariantsTable + " WHERE " + ID + "=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            variant.setId(cursor.getInt(cursor.getColumnIndex(ID)));
+            variant.setColor(cursor.getString(cursor.getColumnIndex(COLOR)));
+            variant.setPrice(cursor.getString(cursor.getColumnIndex(PRICE)));
+            variant.setSize(cursor.getDouble(cursor.getColumnIndex(SIZE)));
+        }
+        cursor.close();
+        db.close();
+
+        // return variant
+        return variant;
     }
 
     // Get Product Size By Id
@@ -660,9 +719,11 @@ public class DB_Handler extends SQLiteOpenHelper {
         }
     }
 
-    // Get Product Price Range By Id, Size, Color
-    public String getProductPrice(int id, String size, String color) {
+    // Get Product Variant By Id, Size, Color
+    public Variant getProductVariant(int id, String size, String color) {
         double price = 0;
+
+        Variant variant = new Variant();
 
         // Select All Query
         String selectQuery;
@@ -670,22 +731,27 @@ public class DB_Handler extends SQLiteOpenHelper {
         Cursor cursor;
 
         if (size == null) {
-            selectQuery = "SELECT " + PRICE + " FROM " + VariantsTable + " WHERE " + PDT_ID + "=? AND " + COLOR + "=?";
+            selectQuery = "SELECT * FROM " + VariantsTable + " WHERE " + PDT_ID + "=? AND " + COLOR + "=?";
             cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id), color});
         } else {
-            selectQuery = "SELECT " + PRICE + " FROM " + VariantsTable + " WHERE " + PDT_ID + "=? AND " + SIZE + "=? AND " + COLOR + "=?";
+            selectQuery = "SELECT * FROM " + VariantsTable + " WHERE " + PDT_ID + "=? AND " + SIZE + "=? AND " + COLOR + "=?";
             cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id), size, color});
         }
 
         // looping through all rows and adding to list
         if (cursor.moveToFirst()) {
+            int var_id = cursor.getInt(cursor.getColumnIndex(ID));
             String priceString = cursor.getString(cursor.getColumnIndex(PRICE));
             price = Double.parseDouble(priceString);
+            priceString = formatDouble(price);
+
+            variant.setId(var_id);
+            variant.setPrice(priceString);
         }
         cursor.close();
         db.close();
 
-        return "Rs." + formatDouble(price);
+        return variant;
     }
 
     // Get All Colors
@@ -739,25 +805,23 @@ public class DB_Handler extends SQLiteOpenHelper {
     }
 
     // Register User
-    public long registerUser(String name, String email, String mobile, String password)
-    {
+    public long registerUser(String name, String email, String mobile, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(NAME, name);
         values.put(EMAIL, email);
-        values.put(MOBILE,mobile);
+        values.put(MOBILE, mobile);
         values.put(PASSWORD, password);
 
         return db.insert(UserTable, null, values);
     }
 
     // Get User
-    public User getUser(String email)
-    {
+    public User getUser(String email) {
         User user = new User();
 
         // Select Query
-        String selectQuery = "SELECT * FROM " + UserTable + " WHERE "+EMAIL+"=?";
+        String selectQuery = "SELECT * FROM " + UserTable + " WHERE " + EMAIL + "=?";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{email});
@@ -773,5 +837,86 @@ public class DB_Handler extends SQLiteOpenHelper {
 
         // return user
         return user;
+    }
+
+    // Insert Product Into Cart
+    public long insertIntoCart(int pdt_id, int var_id, int quantity, String email) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PDT_ID, pdt_id);
+        values.put(VAR_ID, var_id);
+        values.put(QUANTITY,quantity);
+        values.put(EMAIL,email);
+
+        // Check If Value Already Exists
+        String selectQuery = "SELECT * FROM " + ShoppingCartTable + " WHERE " + EMAIL + "=? AND "+PDT_ID+"=? AND "+VAR_ID+"=?";
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{email,String.valueOf(pdt_id),String.valueOf(var_id)});
+        if (cursor.moveToFirst()) {
+            cursor.close();
+            return -1;
+        }
+        cursor.close();
+        return db.insert(ShoppingCartTable, null, values);
+    }
+
+    // Get Shopping Cart Items
+    public List<Cart> getCartItems(String email) {
+        List<Cart> shoppingCart = new ArrayList<Cart>();
+
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + ShoppingCartTable + " WHERE " + EMAIL + "=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{email});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Cart cart = new Cart();
+                int id = cursor.getInt(cursor.getColumnIndex(ID));
+                int productId = cursor.getInt(cursor.getColumnIndex(PDT_ID));
+                int variantId = cursor.getInt(cursor.getColumnIndex(VAR_ID));
+                int quantity = cursor.getInt(cursor.getColumnIndex(QUANTITY));
+
+                Product product = getProductDetailsById(productId);
+                Variant variant = getVariantDetailsById(variantId);
+
+                cart.setId(id);
+                cart.setItemQuantity(quantity);
+                cart.setProduct(product);
+                cart.setVariant(variant);
+
+                // Adding to list
+                shoppingCart.add(cart);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // return cart items list
+        return shoppingCart;
+    }
+
+    // Delete Cart Item By Id
+    public boolean deleteCartItem(int id)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(ShoppingCartTable,ID+"=?",new String[]{String.valueOf(id)}) > 0;
+    }
+
+    // Get Cart Item Count
+    public int getCartItemCount(String email)
+    {
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + ShoppingCartTable + " WHERE " + EMAIL + "=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{email});
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+
+        return count;
     }
 }

@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.preethzcodez.ecommerceexample.MainActivity;
@@ -27,6 +31,8 @@ public class SignIn extends Fragment {
 
     Button signIn;
     EditText email, password;
+    ImageView back, showpassword;
+    boolean isPasswordShown = false;
 
     @Nullable
     @Override
@@ -45,6 +51,8 @@ public class SignIn extends Fragment {
         email = (EditText) view.findViewById(R.id.email);
         password = (EditText) view.findViewById(R.id.password);
         signIn = (Button) view.findViewById(R.id.signin);
+        back = (ImageView) view.findViewById(R.id.back);
+        showpassword = (ImageView) view.findViewById(R.id.showpassword);
     }
 
     // Set Click Listeners
@@ -94,6 +102,33 @@ public class SignIn extends Fragment {
                     }
                 } else {
                     showErrorToast("Email Id");
+                }
+            }
+        });
+
+        // Back Button Click
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.remove(fm.findFragmentById(R.id.fragment));
+                ft.commit();
+            }
+        });
+
+        // Show / Hide Password
+        showpassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isPasswordShown) {
+                    password.setTransformationMethod(new PasswordTransformationMethod());
+                    showpassword.setImageResource(R.drawable.ic_eye_off_grey600_24dp);
+                    isPasswordShown = false;
+                } else {
+                    password.setTransformationMethod(null);
+                    showpassword.setImageResource(R.drawable.ic_eye_white_24dp);
+                    isPasswordShown = true;
                 }
             }
         });

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include android:id="@+id/toolbar"
+        layout="@layout/toolbar"/>
+
+    <include
+        layout="@layout/listview"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomLay" />
+
+    <TableLayout
+        android:id="@+id/bottomLay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:stretchColumns="1">
+
+        <TableRow android:background="@color/white">
+
+            <TextView
+                android:id="@+id/payableAmt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/defaultMargin"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Rs. 72,000"
+                android:textColor="@color/black"
+                android:textSize="@dimen/payable_amt" />
+        </TableRow>
+
+        <TableRow android:background="@color/white">
+
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/halfMargin"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="@dimen/halfMargin"
+                android:layout_marginTop="@dimen/halfMargin"
+                android:layout_weight="1"
+                android:background="@drawable/rounded_corner_blue"
+                android:text="@string/place_order"
+                android:textColor="@color/white"
+                android:textSize="@dimen/product_detail_button" />
+        </TableRow>
+    </TableLayout>
+</RelativeLayout>

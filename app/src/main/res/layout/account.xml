@@ -1,6 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/border">
 
-</LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomLay"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/defaultMargin"
+                android:layout_marginRight="@dimen/defaultMargin"
+                android:layout_marginTop="@dimen/defaultMargin"
+                android:text="Preeth"
+                android:textColor="@color/black"
+                android:textSize="@dimen/account_name" />
+
+            <TextView
+                android:id="@+id/mobile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/halfMargin"
+                android:layout_marginRight="@dimen/defaultMargin"
+                android:layout_marginLeft="@dimen/defaultMargin"
+                android:text="9995188504"
+                android:textColor="@color/black"
+                android:textSize="@dimen/account_content" />
+
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/halfMargin"
+                android:layout_marginRight="@dimen/defaultMargin"
+                android:layout_marginLeft="@dimen/defaultMargin"
+                android:layout_marginBottom="@dimen/defaultMargin"
+                android:text="preeth@gmail.com"
+                android:textColor="@color/black"
+                android:textSize="@dimen/account_content" />
+
+            <include layout="@layout/border" />
+
+            <TextView
+                android:id="@+id/address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/defaultMargin"
+                android:text="Address"
+                android:textColor="@color/black"
+                android:textSize="@dimen/account_title" />
+
+            <include layout="@layout/border" />
+
+            <TextView
+                android:id="@+id/logout"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/defaultMargin"
+                android:text="Logout"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/black"
+                android:textSize="@dimen/account_title" />
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

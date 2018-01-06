@@ -79,7 +79,7 @@ public class FilterItemListAdapter extends BaseExpandableListAdapter {
 
             case 1:
                 try {
-                    if (colorFilter.contains("'"+childText+"'")) {
+                    if (colorFilter.contains("'" + childText + "'")) {
                         img.setVisibility(View.VISIBLE);
                     } else {
                         img.setVisibility(View.GONE);
@@ -125,12 +125,47 @@ public class FilterItemListAdapter extends BaseExpandableListAdapter {
             convertView = infalInflater.inflate(R.layout.sort_filter_listitem, null);
         }
 
+        // Set Arrow
+        ImageView arrow = (ImageView) convertView.findViewById(R.id.arrow);
+        arrow.setVisibility(View.VISIBLE);
         if (isExpanded) {
-
+            arrow.setImageResource(R.drawable.ic_chevron_down_grey600_24dp);
         } else {
-
+            arrow.setImageResource(R.drawable.ic_chevron_right_grey600_24dp);
         }
 
+        // Set Count
+        TextView count = (TextView) convertView
+                .findViewById(R.id.count);
+        switch (groupPosition) {
+            case 0: // Size
+                try {
+                    if (sizeFilter.size() > 0) {
+                        count.setVisibility(View.VISIBLE);
+                        count.setText(String.valueOf(sizeFilter.size()));
+                    } else {
+                        count.setVisibility(View.GONE);
+                    }
+                } catch (NullPointerException e) {
+                    count.setVisibility(View.GONE);
+                }
+                break;
+
+            case 1: // Color
+                try {
+                    if (colorFilter.size() > 0) {
+                        count.setVisibility(View.VISIBLE);
+                        count.setText(String.valueOf(colorFilter.size()));
+                    } else {
+                        count.setVisibility(View.GONE);
+                    }
+                } catch (NullPointerException e) {
+                    count.setVisibility(View.GONE);
+                }
+                break;
+        }
+
+        // Set Header
         TextView lblListHeader = (TextView) convertView
                 .findViewById(R.id.name);
         lblListHeader.setTypeface(null, Typeface.BOLD);

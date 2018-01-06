@@ -4,11 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.text.method.PasswordTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.preethzcodez.ecommerceexample.MainActivity;
@@ -25,8 +29,10 @@ import com.preethzcodez.ecommerceexample.utils.Util;
 
 public class SignUp extends Fragment {
 
-    EditText name, email, password, mobile, address1, address2, pin, state, country;
+    EditText name, email, password, mobile;
     Button signUp;
+    ImageView back, showpassword;
+    boolean isPasswordShown = false;
 
     @Nullable
     @Override
@@ -47,6 +53,8 @@ public class SignUp extends Fragment {
         password = (EditText) view.findViewById(R.id.password);
         mobile = (EditText) view.findViewById(R.id.mobile);
         signUp = (Button) view.findViewById(R.id.signup);
+        back = (ImageView) view.findViewById(R.id.back);
+        showpassword = (ImageView) view.findViewById(R.id.showpassword);
     }
 
     // Set Click Listeners
@@ -101,6 +109,33 @@ public class SignUp extends Fragment {
                     }
                 } else {
                     showErrorToast("Full Name");
+                }
+            }
+        });
+
+        // Back Button Click
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.remove(fm.findFragmentById(R.id.fragment));
+                ft.commit();
+            }
+        });
+
+        // Show Password
+        showpassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isPasswordShown) {
+                    password.setTransformationMethod(new PasswordTransformationMethod());
+                    showpassword.setImageResource(R.drawable.ic_eye_off_grey600_24dp);
+                    isPasswordShown = false;
+                } else {
+                    password.setTransformationMethod(null);
+                    showpassword.setImageResource(R.drawable.ic_eye_white_24dp);
+                    isPasswordShown = true;
                 }
             }
         });

@@ -20,6 +20,8 @@
     <string name="sort">SORT</string>
     <string name="filter">FILTER</string>
     <string name="filters">Filters</string>
+    <string name="apply">Apply</string>
+    <string name="clear">Clear All</string>
 
     <!-- Product Detail Page -->
     <string name="buy">Buy Now</string>
@@ -28,4 +30,10 @@
     <!-- Sign In / Sign Up -->
     <string name="signin">Sign In</string>
     <string name="signup">Sign Up</string>
+    <string name="name">Full Name</string>
+    <string name="email">Email Id</string>
+    <string name="password">Password</string>
+    <string name="mobile">Mobile Number</string>
+
+    <string name="place_order">Place Order</string>
 </resources>

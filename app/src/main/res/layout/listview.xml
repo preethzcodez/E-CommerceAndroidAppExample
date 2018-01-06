@@ -3,7 +3,7 @@
     android:id="@+id/listview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/border"
     android:clickable="false"
     android:focusable="false"
     android:divider="@color/border"

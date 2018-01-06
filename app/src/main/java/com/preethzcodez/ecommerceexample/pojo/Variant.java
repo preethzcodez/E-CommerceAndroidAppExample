@@ -17,7 +17,7 @@ public class Variant {
     private Object size;
     @SerializedName("price")
     @Expose
-    private Integer price;
+    private String price;
 
     public Integer getId() {
         return id;
@@ -43,11 +43,11 @@ public class Variant {
         this.size = size;
     }
 
-    public Integer getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(String price) {
         this.price = price;
     }
 

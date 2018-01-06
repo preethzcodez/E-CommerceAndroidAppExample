@@ -14,6 +14,7 @@
         android:layout_height="match_parent">
     <ImageView
         android:id="@+id/image"
+        android:background="@color/stroke"
         android:scaleType="center"
         android:src="@drawable/ic_image_grey600_36dp"
         android:layout_width="match_parent"

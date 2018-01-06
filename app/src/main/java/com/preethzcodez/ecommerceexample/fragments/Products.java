@@ -7,10 +7,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -36,7 +38,7 @@ public class Products extends Fragment {
     RelativeLayout sort, filter;
     TextView sortByText;
     String[] sortByArray = {"Most Recent", "Most Orders", "Most Shares", "Most Viewed"};
-    int sortById = 0;
+    int sortById = 0, cat_id = 0;
     GridView productsGrid;
     List<String> sizeFilter = new ArrayList<>();
     List<String> colorFilter = new ArrayList<>();
@@ -54,6 +56,7 @@ public class Products extends Fragment {
 
         // get data
         Bundle args = getArguments();
+        cat_id = args.getInt(Constants.CAT_ID_KEY);
         List<Product> productList = (List<Product>) args.getSerializable(Constants.PDT_KEY);
         sortByText.setText(sortByArray[0]);
         fillGridView(productList); // Fill Grid View
@@ -102,7 +105,7 @@ public class Products extends Fragment {
 
                         // Reload Products List
                         DB_Handler db_handler = new DB_Handler(getActivity());
-                        fillGridView(db_handler.getProductsList(sortById));
+                        fillGridView(db_handler.getProductsList(sortById, sizeFilter, colorFilter, cat_id));
                         dialog.dismiss();
                     }
                 });
@@ -117,6 +120,7 @@ public class Products extends Fragment {
             public void onClick(View view) {
                 // Create Dialog
                 final Dialog dialog = new Dialog(getActivity());
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.filterlayout);
 
                 // Get Colors and Get Sizes
@@ -135,7 +139,7 @@ public class Products extends Fragment {
                 headers.add("Color");
 
                 final ExpandableListView listView = (ExpandableListView) dialog.findViewById(R.id.expandableList);
-                final FilterItemListAdapter filterItemListAdapter = new FilterItemListAdapter(getActivity(), headers, listHashMap, sizeFilter,colorFilter);
+                final FilterItemListAdapter filterItemListAdapter = new FilterItemListAdapter(getActivity(), headers, listHashMap, sizeFilter, colorFilter);
                 listView.setAdapter(filterItemListAdapter);
                 listView.setDividerHeight(1);
                 listView.setFocusable(true);
@@ -157,10 +161,10 @@ public class Products extends Fragment {
                                 break;
 
                             case 1: // Color
-                                if (!colorFilter.contains("'"+colors.get(childPosition)+"'")) {
-                                    colorFilter.add("'"+colors.get(childPosition)+"'");
+                                if (!colorFilter.contains("'" + colors.get(childPosition) + "'")) {
+                                    colorFilter.add("'" + colors.get(childPosition) + "'");
                                 } else {
-                                    colorFilter.remove("'"+colors.get(childPosition)+"'");
+                                    colorFilter.remove("'" + colors.get(childPosition) + "'");
                                 }
                                 break;
                         }
@@ -177,7 +181,37 @@ public class Products extends Fragment {
 
                         // Reload Products List By Filter
                         DB_Handler db_handler = new DB_Handler(getActivity());
-                        fillGridView(db_handler.getProductsListByFilter(sortById,sizeFilter,colorFilter));
+                        fillGridView(db_handler.getProductsList(sortById, sizeFilter, colorFilter, cat_id));
+                        dialog.dismiss();
+                    }
+                });
+
+                // Clear All Button Click
+                Button clear = (Button) dialog.findViewById(R.id.clear);
+                clear.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        try {
+                            sizeFilter.clear();
+                        } catch (NullPointerException ignore) {
+
+                        }
+
+                        try {
+                            colorFilter.clear();
+                        } catch (NullPointerException ignore) {
+
+                        }
+                        filterItemListAdapter.notifyDataSetChanged();
+                    }
+                });
+
+                // Close Button
+                final ImageView close = (ImageView) dialog.findViewById(R.id.close);
+                close.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         dialog.dismiss();
                     }
                 });

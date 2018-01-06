@@ -1,19 +1,15 @@
 package com.preethzcodez.ecommerceexample.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.preethzcodez.ecommerceexample.MainActivity;
 import com.preethzcodez.ecommerceexample.R;
@@ -67,9 +63,7 @@ public class SubcategoryGridAdapter extends BaseAdapter {
 
         rowView = inflater.inflate(R.layout.categories_grid_item, null);
         holder.category = (TextView) rowView.findViewById(R.id.name);
-
         holder.category.setText(subCategoryList.get(position).getName());
-        //holder.img.setImageResource(imageId[position]);
 
         holder.gridItemLayout = (RelativeLayout) rowView.findViewById(R.id.gridItemLayouut);
         holder.gridItemLayout.setOnClickListener(new View.OnClickListener() {
@@ -98,9 +92,10 @@ public class SubcategoryGridAdapter extends BaseAdapter {
                     ft.commit();
                 } else {
                     // get products list by category
-                    List<Product> productsList = db_handler.getProductsListByCategory(id);
+                    List<Product> productsList = db_handler.getProductsList(0,null,null,id);
 
                     // add bundle arguments
+                    bundle.putInt(Constants.CAT_ID_KEY,id);
                     bundle.putSerializable(Constants.PDT_KEY, (Serializable) productsList);
 
                     Products products = new Products();

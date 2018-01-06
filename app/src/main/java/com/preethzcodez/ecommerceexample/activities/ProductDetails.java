@@ -4,7 +4,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -12,7 +14,10 @@ import android.widget.Toast;
 
 import com.preethzcodez.ecommerceexample.R;
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
+import com.preethzcodez.ecommerceexample.database.SessionManager;
 import com.preethzcodez.ecommerceexample.pojo.Product;
+import com.preethzcodez.ecommerceexample.pojo.Variant;
+import com.preethzcodez.ecommerceexample.utils.Constants;
 
 import org.apmem.tools.layouts.FlowLayout;
 
@@ -31,16 +36,36 @@ public class ProductDetails extends AppCompatActivity {
     String selectedColor = null;
     String selectedItemPrice = null;
     int selectedItemQuantity = 1;
+    int selectedItemVariantId = 0;
+    String userEmail = null;
 
     LinearLayout colorParentLay, sizeParentLay;
     FlowLayout colorsLay, sizeLay;
     TextView price, quantityValue;
     ImageView minus, plus;
+    Button cart;
+    SessionManager sessionManager;
+    int cartCount = 0;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.product_detail);
+
+        // Set Toolbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //toolbar.setTitle("WSM");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white, null));
+        } else {
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        setSupportActionBar(toolbar);
+
+        // Get User Email
+        sessionManager = new SessionManager(this);
+        userEmail = sessionManager.getSessionData(Constants.SESSION_EMAIL);
 
         // Get Product Id
         int id = getIntent().getIntExtra("ProductId", 0);
@@ -52,10 +77,12 @@ public class ProductDetails extends AppCompatActivity {
         setIds();
         setValues();
         setQuantityUpdateListeners();
+        setBottomPanelClickListeners();
     }
 
     // Set Ids
     private void setIds() {
+        cart = (Button) findViewById(R.id.cartButton);
         colorParentLay = (LinearLayout) findViewById(R.id.colorParentLay);
         sizeParentLay = (LinearLayout) findViewById(R.id.sizeParentLay);
         colorsLay = (FlowLayout) findViewById(R.id.colorsLay);
@@ -64,6 +91,35 @@ public class ProductDetails extends AppCompatActivity {
         quantityValue = (TextView) findViewById(R.id.quantityValue);
         minus = (ImageView) findViewById(R.id.minus);
         plus = (ImageView) findViewById(R.id.plus);
+    }
+
+    // Set Bottom Panel Click Listeners
+    private void setBottomPanelClickListeners() {
+        cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                try {
+                    // Get Selected Item Price
+                    if (selectedSize.equals("-") || selectedSize != null) {
+                        if (selectedColor != null) {
+                            long result = db_handler.insertIntoCart(product.getId(), selectedItemVariantId, selectedItemQuantity, userEmail);
+                            if (result > 0) {
+                                Toast.makeText(getApplicationContext(), "Successfully Added", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Item Already Added", Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Please Select Color", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Please Select Size", Toast.LENGTH_LONG).show();
+                    }
+                } catch (NullPointerException e) {
+                    Toast.makeText(getApplicationContext(), "Please Select Size", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     // Set Values
@@ -208,14 +264,18 @@ public class ProductDetails extends AppCompatActivity {
                                     TextView textView = (TextView) view;
                                     selectedColor = textView.getText().toString();
 
+                                    Variant variant;
                                     if (selectedSize.equals("-")) // no size for product
                                     {
-                                        selectedItemPrice = db_handler.getProductPrice(product.getId(), null, selectedColor);
+                                        variant = db_handler.getProductVariant(product.getId(), null, selectedColor);
+                                        selectedItemPrice = variant.getPrice();
                                     } else {
-                                        selectedItemPrice = db_handler.getProductPrice(product.getId(), selectedSize, selectedColor);
+                                        variant = db_handler.getProductVariant(product.getId(), selectedSize, selectedColor);
+                                        selectedItemPrice = variant.getPrice();
                                     }
 
-                                    price.setText(selectedItemPrice);
+                                    selectedItemVariantId = variant.getId();
+                                    price.setText("Rs." + selectedItemPrice);
                                     setColorLayout(colorList); // reload to refresh background
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Please Select Size", Toast.LENGTH_LONG).show();
@@ -255,5 +315,24 @@ public class ProductDetails extends AppCompatActivity {
                 quantityValue.setText(String.valueOf(selectedItemQuantity));
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        updateCartCount();
+    }
+
+    // Update Cart Item Count In Toolbar
+    private void updateCartCount()
+    {
+        // Update Cart Count
+        cartCount = db_handler.getCartItemCount(sessionManager.getSessionData(Constants.SESSION_EMAIL));
+        if (cartCount > 0) {
+            TextView count = (TextView) findViewById(R.id.count);
+            count.setVisibility(View.VISIBLE);
+            count.setText(String.valueOf(cartCount));
+        }
     }
 }
