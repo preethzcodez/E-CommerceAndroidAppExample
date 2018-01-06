@@ -1,28 +1,28 @@
 package com.preethzcodez.ecommerceexample;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TableLayout;
 
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
-import com.preethzcodez.ecommerceexample.pojo.Category;
-import com.preethzcodez.ecommerceexample.pojo.Product;
-import com.preethzcodez.ecommerceexample.pojo.ProductRank;
-import com.preethzcodez.ecommerceexample.pojo.Ranking;
-import com.preethzcodez.ecommerceexample.pojo.ResponseJSON;
-import com.preethzcodez.ecommerceexample.pojo.Variant;
-import com.preethzcodez.ecommerceexample.webservice.RetrofitBuilder;
-import com.preethzcodez.ecommerceexample.webservice.RetrofitInterface;
-
-import java.util.List;
-
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+import com.preethzcodez.ecommerceexample.database.SessionManager;
+import com.preethzcodez.ecommerceexample.fragments.SignIn;
+import com.preethzcodez.ecommerceexample.fragments.SignUp;
+import com.preethzcodez.ecommerceexample.service.SyncDBService;
+import com.preethzcodez.ecommerceexample.utils.Constants;
 
 /**
  * Created by Preeth on 1/3/2018.
@@ -31,147 +31,81 @@ import retrofit2.Retrofit;
 public class SplashActivity extends AppCompatActivity {
 
     DB_Handler db_handler;
+    Button signIn, signUp;
+    Handler handler;
+    TableLayout bottomLay;
+    Snackbar snackbar = null;
+    CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
+        // Service To Fetch Data From URL
+        setHandler();
+        startIntentService();
+
         // Initialize DB Handler
         db_handler = new DB_Handler(this);
 
-        // Fetch Data From URL Only If Local DB Is Empty
-        if (db_handler.getItemCount() == 0) {
-            fetchData();
-        } else {
-            loadNextActivity();
-        }
+        setIds();
+        setClickListeners();
     }
 
-    // Fetch Data From URL
-    private void fetchData() {
-        // Initialize Retrofit
-        RetrofitBuilder retrofitBuilder = new RetrofitBuilder(this);
-        OkHttpClient httpClient = retrofitBuilder.setClient();
-        Retrofit retrofit = retrofitBuilder.retrofitBuilder(httpClient);
-        RetrofitInterface retrofitInterface = retrofit.create(RetrofitInterface.class);
+    // Set Ids
+    private void setIds() {
+        signIn = (Button) findViewById(R.id.signin);
+        signUp = (Button) findViewById(R.id.signup);
+        bottomLay = (TableLayout) findViewById(R.id.bottomLay);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLay);
+    }
 
-        // Call Web Service
-        Call<ResponseJSON> call = retrofitInterface.fetchData();
-        call.enqueue(new Callback<ResponseJSON>() {
+    // Set Click Listeners
+    private void setClickListeners() {
+        // Sign In
+        signIn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<ResponseJSON> call, Response<ResponseJSON> response) {
-                try {
-                    if (response.body() != null) {
-                        processData(response.body());
-                    } else {
-                        // Show Error In Snack Bar
-                    }
-                } catch (Exception e) {
-                    // Show Error In Snack Bar
-
-                }
+            public void onClick(View view) {
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.fragment, new SignIn());
+                ft.commit();
             }
+        });
 
+        // Sign Up
+        signUp.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(Call<ResponseJSON> call, Throwable t) {
-                t.printStackTrace();
+            public void onClick(View view) {
+                FragmentManager fm = getSupportFragmentManager();
+                FragmentTransaction ft = fm.beginTransaction();
+                ft.replace(R.id.fragment, new SignUp());
+                ft.commit();
             }
         });
     }
 
-    // Process JSON and Save In Local DB
-    private void processData(ResponseJSON responseJSON) {
-        try {
+    // Start Intent Service To Fetch Data
+    private void startIntentService()
+    {
+        Intent intent = new Intent(getApplicationContext(), SyncDBService.class);
+        intent.putExtra("messenger", new Messenger(handler));
+        startService(intent);
+    }
 
-            // Get Categories
-            List<Category> categoryList = responseJSON.getCategories();
-            for (int i = 0; i < categoryList.size(); i++) {
-
-                int CategoryID = responseJSON.getCategories().get(i).getId();
-                String CategoryName = responseJSON.getCategories().get(i).getName();
-
-                // insert category into local DB
-                db_handler.insertCategories(CategoryID, CategoryName);
-
-                // Get Products
-                List<Product> productList = responseJSON.getCategories().get(i).getProducts();
-                for (int j = 0; j < productList.size(); j++) {
-                    int ProductID = productList.get(j).getId();
-                    String ProductName = productList.get(j).getName();
-                    String Date = productList.get(j).getDateAdded();
-                    String TaxName = productList.get(j).getTax().getName();
-                    Double TaxValue = productList.get(j).getTax().getValue();
-
-                    // insert products into local DB
-                    db_handler.insertProducts(ProductID, CategoryID, ProductName, Date, TaxName, TaxValue);
-
-                    // Get Variants
-                    List<Variant> variantList = productList.get(j).getVariants();
-                    for (int p = 0; p < variantList.size(); p++) {
-                        int VariantID = variantList.get(p).getId();
-                        String Size = null;
-                        String Color = variantList.get(p).getColor();
-                        String Price = String.valueOf(variantList.get(p).getPrice());
-
-                        try {
-                            // Size May Produce NullPointerException
-                            Size = variantList.get(p).getSize().toString();
-                        } catch (NullPointerException ignore) {
-                        }
-
-                        // insert variants into local DB
-                        db_handler.insertVariants(VariantID, Size, Color, Price, ProductID);
-                    }
+    // Check Session
+    private void checkSession() {
+        SessionManager sessionManager = new SessionManager(this);
+        if (sessionManager.getSessionData(Constants.SESSION_EMAIL) != null && sessionManager.getSessionData(Constants.SESSION_EMAIL).trim().length() > 0) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    loadNextActivity();
                 }
-
-                // Get Child Categories
-                List<Integer> childCategories = categoryList.get(i).getChildCategories();
-                for (int k = 0; k < childCategories.size(); k++) {
-                    int SubcategoryID = childCategories.get(k);
-
-                    // insert childs into subcategory mapping
-                    db_handler.insertChildCategoryMapping(CategoryID, SubcategoryID);
-                }
-            }
-
-            // Get Rankings
-            List<Ranking> rankingList = responseJSON.getRankings();
-            for (int i = 0; i < rankingList.size(); i++) {
-                // Get Products Rank List
-                List<ProductRank> productRankList = rankingList.get(i).getProducts();
-                for (int j = 0; j < productRankList.size(); j++) {
-                    try {
-                        int id = productRankList.get(j).getId();
-                        switch (i) {
-                            case 0: // Most Viewed Products
-                                int viewCount = productRankList.get(j).getViewCount();
-
-                                // update product table
-                                db_handler.updateCounts(DB_Handler.VIEW_COUNT, viewCount, id);
-                                break;
-
-                            case 1: // Most Ordered Products
-                                int orderCount = productRankList.get(j).getOrderCount();
-
-                                // update product table
-                                db_handler.updateCounts(DB_Handler.ORDER_COUNT, orderCount, id);
-                                break;
-
-                            case 2: // Most Shared Products
-                                int shareCount = productRankList.get(j).getShares();
-
-                                // update product table
-                                db_handler.updateCounts(DB_Handler.SHARE_COUNT, shareCount, id);
-                                break;
-                        }
-                    } catch (Exception ignore) {
-                    }
-                }
-            }
-            Log.i("Success","---");
-        } catch (Exception e) {
-            e.printStackTrace();
+            }, 3000);
+        } else {
+            bottomLay.setVisibility(View.VISIBLE);
         }
     }
 
@@ -180,5 +114,45 @@ public class SplashActivity extends AppCompatActivity {
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(i);
         finish();
+    }
+
+    // Handler To Receive Data From Service
+    @SuppressLint("HandlerLeak")
+    private void setHandler() {
+        try {
+            handler = new Handler() {
+                @Override
+                public void handleMessage(Message msg) {
+                    Bundle reply = msg.getData();
+                    if (reply.getString("message").equals("success")) {
+                        checkSession();
+                    } else {
+                        // Show Error In Snack Bar
+                        try {
+                            String message = reply.getString("message");
+                            snackbar = Snackbar
+                                    .make(coordinatorLayout, message, Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("RETRY", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            snackbar.dismiss();
+                                            startIntentService();
+                                        }
+                                    });
+
+                            // Changing message text color
+                            snackbar.setActionTextColor(Color.RED);
+                            snackbar.show();
+                        }
+                        catch (Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

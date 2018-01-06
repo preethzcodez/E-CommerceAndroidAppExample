@@ -1,5 +1,13 @@
 package com.preethzcodez.ecommerceexample.utils;
 
+import android.content.Context;
+import android.text.TextUtils;
+
+import com.preethzcodez.ecommerceexample.R;
+
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Locale;
 
@@ -27,5 +35,19 @@ public class Util {
         inClause = inClause.replace("]", ")");
 
         return inClause;
+    }
+
+    // Check email valid or not
+    public static boolean isValidEmail(String email) {
+        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    // Get Error Message
+    public static String getErrorMessage(Throwable t, Context context) {
+        if (t instanceof SocketTimeoutException || t instanceof UnknownHostException || t instanceof ConnectException) {
+            return context.getResources().getString(R.string.NoInternet);
+        } else {
+            return context.getResources().getString(R.string.Error500);
+        }
     }
 }

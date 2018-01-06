@@ -3,8 +3,12 @@
     <string name="splash_text">E-Commerce Shopping</string>
     
     <!-- Error Messages -->
-    <string name="NoInternet">No Internet</string>
+    <string name="NoInternet">Please check your internet connection</string>
     <string name="Error500">Error: Something Went Wrong</string>
+    <string name="BlankError">" should not be blank"</string>
+    <string name="EmailError">"Email Id not valid"</string>
+    <string name="EmailExistsError">"Email Id Already Exists"</string>
+    <string name="InvalidUser">Invalid email id or password</string>
 
     <!-- Bottom Navigation Titles -->
     <string name="TitleHome">Home</string>
@@ -20,4 +24,8 @@
     <!-- Product Detail Page -->
     <string name="buy">Buy Now</string>
     <string name="cart">Add To Cart</string>
+
+    <!-- Sign In / Sign Up -->
+    <string name="signin">Sign In</string>
+    <string name="signup">Sign Up</string>
 </resources>

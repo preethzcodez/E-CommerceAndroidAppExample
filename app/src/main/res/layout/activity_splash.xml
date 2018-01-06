@@ -1,19 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/coordinatorLay"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary">
 
     <RelativeLayout
-        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <TextView
-            android:layout_centerInParent="true"
-            android:textSize="@dimen/SplashText"
-            android:textColor="@color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/splash_text" />
+            android:layout_centerInParent="true"
+            android:text="@string/splash_text"
+            android:textColor="@color/white"
+            android:textSize="@dimen/SplashText" />
+
+        <TableLayout
+            android:visibility="gone"
+            android:id="@+id/bottomLay"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_alignParentBottom="true"
+            android:stretchColumns="1">
+
+            <TableRow>
+
+                <Button
+                    android:id="@+id/signin"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/halfMargin"
+                    android:layout_marginLeft="@dimen/halfMargin"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginTop="@dimen/halfMargin"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_corner_yellow"
+                    android:text="@string/signin"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/product_detail_button" />
+
+                <Button
+                    android:id="@+id/signup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/halfMargin"
+                    android:layout_marginLeft="2dp"
+                    android:layout_marginRight="@dimen/halfMargin"
+                    android:layout_marginTop="@dimen/halfMargin"
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_corner_yellow"
+                    android:text="@string/signup"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/product_detail_button" />
+            </TableRow>
+        </TableLayout>
     </RelativeLayout>
 
-</RelativeLayout>
+    <FrameLayout
+        android:id="@+id/fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</android.support.design.widget.CoordinatorLayout>

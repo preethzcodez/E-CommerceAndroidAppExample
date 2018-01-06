@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/white"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/back"
+        android:src="@drawable/ic_arrow_left"
+        android:scaleType="center"
+        android:layout_width="56dp"
+        android:layout_height="56dp" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/defaultMargin"
+        android:layout_height="wrap_content">
+        <EditText
+            android:id="@+id/email"
+            android:hint="Email Id"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:layout_margin="@dimen/defaultMargin"
+            android:inputType="textEmailAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/password"
+            android:hint="Password"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:inputType="textPassword"
+            android:layout_margin="@dimen/defaultMargin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/signin"
+            android:layout_width="match_parent"
+            android:text="Sign In"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:background="@drawable/rounded_corner_blue"
+            android:layout_margin="@dimen/defaultMargin"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</RelativeLayout>

@@ -5,10 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.preethzcodez.ecommerceexample.pojo.Category;
 import com.preethzcodez.ecommerceexample.pojo.Product;
 import com.preethzcodez.ecommerceexample.pojo.Tax;
+import com.preethzcodez.ecommerceexample.pojo.User;
 import com.preethzcodez.ecommerceexample.utils.Util;
 
 import java.util.ArrayList;
@@ -156,7 +158,21 @@ public class DB_Handler extends SQLiteOpenHelper {
         values.put(ID, id);
         values.put(NAME, name);
 
-        db.insert(CategoriesTable, null, values);
+        // Check If Value Already Exists
+        boolean isUpdate = false;
+        String selectQuery = "SELECT * FROM " + CategoriesTable + " WHERE " + ID + "=?";
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
+        if (cursor.moveToFirst()) {
+            isUpdate = true;
+        }
+        cursor.close();
+
+        if (isUpdate) {
+            db.update(CategoriesTable, values, ID + " = ?",
+                    new String[]{String.valueOf(id)});
+        } else {
+            db.insert(CategoriesTable, null, values);
+        }
         db.close();
     }
 
@@ -171,6 +187,22 @@ public class DB_Handler extends SQLiteOpenHelper {
         values.put(DATE, date);
         values.put(TAX_NAME, tax_name);
         values.put(TAX_VALUE, tax_value);
+
+        // Check If Value Already Exists
+        boolean isUpdate = false;
+        String selectQuery = "SELECT * FROM " + ProductsTable + " WHERE " + ID + "=?";
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
+        if (cursor.moveToFirst()) {
+            isUpdate = true;
+        }
+        cursor.close();
+
+        if (isUpdate) {
+            db.update(ProductsTable, values, ID + " = ?",
+                    new String[]{String.valueOf(id)});
+            db.close();
+            return;
+        }
 
         // Set View / Order / Share Counts To 0
         values.put(VIEW_COUNT, 0);
@@ -192,7 +224,22 @@ public class DB_Handler extends SQLiteOpenHelper {
         values.put(PRICE, price);
         values.put(PDT_ID, product_id);
 
-        db.insert(VariantsTable, null, values);
+        // Check If Value Already Exists
+        boolean isUpdate = false;
+        String selectQuery = "SELECT * FROM " + VariantsTable + " WHERE " + ID + "=?";
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(id)});
+        if (cursor.moveToFirst()) {
+            isUpdate = true;
+        }
+        cursor.close();
+
+        if (isUpdate) {
+            db.update(VariantsTable, values, ID + " = ?",
+                    new String[]{String.valueOf(id)});
+        } else {
+            db.insert(VariantsTable, null, values);
+        }
+
         db.close();
     }
 
@@ -204,7 +251,24 @@ public class DB_Handler extends SQLiteOpenHelper {
         values.put(CAT_ID, category_id);
         values.put(SUB_ID, child_id);
 
-        db.insert(SubCategoriesMappingTable, null, values);
+        // Check If Value Already Exists
+        boolean isUpdate = false;
+        int id = 0;
+        String selectQuery = "SELECT * FROM " + SubCategoriesMappingTable + " WHERE " + CAT_ID + "=? AND " + SUB_ID + "=?";
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(category_id), String.valueOf(child_id)});
+        if (cursor.moveToFirst()) {
+            isUpdate = true;
+            id = cursor.getInt(cursor.getColumnIndex(ID));
+        }
+        cursor.close();
+
+        if (isUpdate) {
+            db.update(SubCategoriesMappingTable, values, ID + " = ?",
+                    new String[]{String.valueOf(id)});
+        } else {
+            db.insert(SubCategoriesMappingTable, null, values);
+        }
+
         db.close();
     }
 
@@ -288,7 +352,7 @@ public class DB_Handler extends SQLiteOpenHelper {
         List<Product> productList = new ArrayList<Product>();
 
         // Create Query According To Filter
-        String selectQuery = "SELECT DISTINCT "+PDT_ID+" FROM " + VariantsTable;
+        String selectQuery = "SELECT DISTINCT " + PDT_ID + " FROM " + VariantsTable;
         try {
             if (sizes.size() > 0) {
                 String inClauseSizes = Util.getInClause(sizes);
@@ -301,9 +365,9 @@ public class DB_Handler extends SQLiteOpenHelper {
             if (colors.size() > 0) {
                 String inClauseColors = Util.getInClause(colors);
                 if (sizes.size() > 0) {
-                    selectQuery = selectQuery + " AND " + COLOR + " IN "+ inClauseColors;
+                    selectQuery = selectQuery + " AND " + COLOR + " IN " + inClauseColors;
                 } else {
-                    selectQuery = selectQuery + " WHERE " + COLOR + " IN "+ inClauseColors;
+                    selectQuery = selectQuery + " WHERE " + COLOR + " IN " + inClauseColors;
                 }
             }
         } catch (Exception ignore) {
@@ -322,12 +386,10 @@ public class DB_Handler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        try
-        {
-            if(productIdList.size() > 0)
-            {
+        try {
+            if (productIdList.size() > 0) {
                 String inClause = Util.getInClause(productIdList);
-                selectQuery = "SELECT  * FROM " + ProductsTable + " WHERE "+ID+" IN "+inClause;
+                selectQuery = "SELECT  * FROM " + ProductsTable + " WHERE " + ID + " IN " + inClause;
                 switch (sortById) {
                     case 0: // Most Recent
                         selectQuery = selectQuery + " ORDER BY date(" + DATE + ") DESC";
@@ -360,8 +422,7 @@ public class DB_Handler extends SQLiteOpenHelper {
                     } while (cursor.moveToNext());
                 }
             }
-        }
-        catch (Exception ignore){
+        } catch (Exception ignore) {
 
         }
 
@@ -675,5 +736,42 @@ public class DB_Handler extends SQLiteOpenHelper {
 
         // return size list
         return sizeList;
+    }
+
+    // Register User
+    public long registerUser(String name, String email, String mobile, String password)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(NAME, name);
+        values.put(EMAIL, email);
+        values.put(MOBILE,mobile);
+        values.put(PASSWORD, password);
+
+        return db.insert(UserTable, null, values);
+    }
+
+    // Get User
+    public User getUser(String email)
+    {
+        User user = new User();
+
+        // Select Query
+        String selectQuery = "SELECT * FROM " + UserTable + " WHERE "+EMAIL+"=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{email});
+
+        if (cursor.moveToFirst()) {
+            user.setEmail(cursor.getString(cursor.getColumnIndex(EMAIL)));
+            user.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+            user.setPassword(cursor.getString(cursor.getColumnIndex(PASSWORD)));
+            user.setMobile(cursor.getString(cursor.getColumnIndex(MOBILE)));
+        }
+        cursor.close();
+        db.close();
+
+        // return user
+        return user;
     }
 }

@@ -12,4 +12,8 @@ public class Constants {
     // Bundle Argument Keys
     public static final String CAT_KEY = "subcategories";
     public static final String PDT_KEY = "products";
+
+    // Session Key
+    public static final String SESSION_EMAIL = "session_email";
+    public static final String SESSION_PASSWORD = "session_password";
 }

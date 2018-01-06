@@ -1,11 +1,13 @@
 package com.preethzcodez.ecommerceexample;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     BottomNavigationView navigation;
     DB_Handler db_handler;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         db_handler = new DB_Handler(this);
+
+        // Set Toolbar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //toolbar.setTitle("WSM");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white, null));
+        } else {
+            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
+        }
+        setSupportActionBar(toolbar);
+
 
         // initialize bottom navigation view
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
