@@ -14,14 +14,39 @@
         android:layout_height="match_parent">
 
         <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="56dp"
+            android:visibility="invisible"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="false"
+            android:scaleType="center"
+            android:src="@drawable/ic_arrow_left_white_24dp" />
+        <TextView
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:text="Title"
+            android:maxLines="1"
+            android:id="@+id/titleToolbar"
+            android:singleLine="true"
+            android:layout_toLeftOf="@+id/cart"
+            android:layout_toRightOf="@+id/backButton"
+            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <ImageView
             android:focusableInTouchMode="false"
             android:focusable="true"
             android:clickable="true"
-            android:layout_marginRight="@dimen/app_default"
+            android:layout_marginRight="@dimen/defaultMargin"
+            android:scaleType="center"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="56dp"
+            android:layout_height="match_parent"
             android:id="@+id/cart"
             android:src="@drawable/ic_cart_outline_white_24dp"/>
 
@@ -33,7 +58,7 @@
             android:visibility="gone"
             android:layout_marginTop="@dimen/defaultMargin"
             android:textSize="10sp"
-            android:layout_marginRight="@dimen/defaultMargin"
+            android:layout_marginRight="@dimen/app_default"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

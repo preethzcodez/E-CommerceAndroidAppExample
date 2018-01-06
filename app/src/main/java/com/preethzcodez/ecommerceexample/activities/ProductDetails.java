@@ -1,5 +1,6 @@
 package com.preethzcodez.ecommerceexample.activities;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -55,13 +56,11 @@ public class ProductDetails extends AppCompatActivity {
 
         // Set Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //toolbar.setTitle("WSM");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white, null));
-        } else {
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        }
         setSupportActionBar(toolbar);
+
+        // Hide Title
+        TextView titleToolbar = (TextView) findViewById(R.id.titleToolbar);
+        titleToolbar.setVisibility(View.GONE);
 
         // Get User Email
         sessionManager = new SessionManager(this);
@@ -76,6 +75,7 @@ public class ProductDetails extends AppCompatActivity {
 
         setIds();
         setValues();
+        setToolbarIconsClickListeners();
         setQuantityUpdateListeners();
         setBottomPanelClickListeners();
     }
@@ -93,6 +93,21 @@ public class ProductDetails extends AppCompatActivity {
         plus = (ImageView) findViewById(R.id.plus);
     }
 
+    // Set Toolbar Icons Click Listeners
+    private void setToolbarIconsClickListeners() {
+        ImageView cart = (ImageView) findViewById(R.id.cart);
+        cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (cartCount > 0) {
+                    startActivity(new Intent(getApplicationContext(), ShoppingCart.class));
+                } else {
+                    Toast.makeText(getApplicationContext(), "Cart Is Empty", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
     // Set Bottom Panel Click Listeners
     private void setBottomPanelClickListeners() {
         cart.setOnClickListener(new View.OnClickListener() {
@@ -106,6 +121,7 @@ public class ProductDetails extends AppCompatActivity {
                             long result = db_handler.insertIntoCart(product.getId(), selectedItemVariantId, selectedItemQuantity, userEmail);
                             if (result > 0) {
                                 Toast.makeText(getApplicationContext(), "Successfully Added", Toast.LENGTH_LONG).show();
+                                updateCartCount();
                             } else {
                                 Toast.makeText(getApplicationContext(), "Item Already Added", Toast.LENGTH_LONG).show();
                             }
@@ -327,12 +343,13 @@ public class ProductDetails extends AppCompatActivity {
     // Update Cart Item Count In Toolbar
     private void updateCartCount()
     {
-        // Update Cart Count
         cartCount = db_handler.getCartItemCount(sessionManager.getSessionData(Constants.SESSION_EMAIL));
+        TextView count = (TextView) findViewById(R.id.count);
         if (cartCount > 0) {
-            TextView count = (TextView) findViewById(R.id.count);
             count.setVisibility(View.VISIBLE);
             count.setText(String.valueOf(cartCount));
+        } else {
+            count.setVisibility(View.GONE);
         }
     }
 }

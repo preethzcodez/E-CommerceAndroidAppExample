@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.ListView;
 
 import com.preethzcodez.ecommerceexample.pojo.Cart;
 import com.preethzcodez.ecommerceexample.pojo.Category;
@@ -905,6 +906,13 @@ public class DB_Handler extends SQLiteOpenHelper {
         return db.delete(ShoppingCartTable,ID+"=?",new String[]{String.valueOf(id)}) > 0;
     }
 
+    // Delete Cart Items
+    public void deleteCartItems()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(ShoppingCartTable,null,null);
+    }
+
     // Get Cart Item Count
     public int getCartItemCount(String email)
     {
@@ -918,5 +926,21 @@ public class DB_Handler extends SQLiteOpenHelper {
         db.close();
 
         return count;
+    }
+
+    // Insert Order
+    public void insertOrderHistory(List<Cart> shoppingCart, String email) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        for(int i=0;i<shoppingCart.size();i++) {
+            ContentValues values = new ContentValues();
+            values.put(PDT_ID, shoppingCart.get(i).getProduct().getId());
+            values.put(VAR_ID, shoppingCart.get(i).getVariant().getId());
+            values.put(QUANTITY, shoppingCart.get(i).getItemQuantity());
+            values.put(EMAIL, email);
+            db.insert(OrderHistoryTable, null, values);
+        }
+        db.close();
+
     }
 }

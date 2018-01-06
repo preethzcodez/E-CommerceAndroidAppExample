@@ -1,7 +1,6 @@
 package com.preethzcodez.ecommerceexample;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -33,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     DB_Handler db_handler;
     SessionManager sessionManager;
     Toolbar toolbar;
+    TextView titleToolbar;
     int cartCount = 0;
 
     @Override
@@ -45,14 +45,11 @@ public class MainActivity extends AppCompatActivity {
 
         // Set Toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //toolbar.setTitle("WSM");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white, null));
-        } else {
-            toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        }
         setSupportActionBar(toolbar);
 
+        // Set Title
+        titleToolbar = (TextView) findViewById(R.id.titleToolbar);
+        titleToolbar.setText("Home");
 
         // initialize bottom navigation view
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
@@ -62,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         setToolbarIconsClickListeners();
     }
 
-    // Set Toolbar Icons Clic Listeners
+    // Set Toolbar Icons Click Listeners
     private void setToolbarIconsClickListeners() {
         ImageView cart = (ImageView) findViewById(R.id.cart);
         cart.setOnClickListener(new View.OnClickListener() {
@@ -92,19 +89,23 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.nav_home: // Home
                     callProductsFragment();
+                    titleToolbar.setText("Home");
                     return true;
 
                 case R.id.nav_categories: // Categories
                     ft.replace(R.id.content, new Categories());
                     ft.commit();
+                    titleToolbar.setText("Categories");
                     return true;
 
                 case R.id.nav_shortlist: // Wish List
+                    titleToolbar.setText("Wish List");
                     return true;
 
                 case R.id.nav_account: // User Account
                     ft.replace(R.id.content, new Account());
                     ft.commit();
+                    titleToolbar.setText("Account");
                     return true;
             }
             return false;
@@ -135,10 +136,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Update Cart Count
         cartCount = db_handler.getCartItemCount(sessionManager.getSessionData(Constants.SESSION_EMAIL));
+        TextView count = (TextView) findViewById(R.id.count);
         if (cartCount > 0) {
-            TextView count = (TextView) findViewById(R.id.count);
             count.setVisibility(View.VISIBLE);
             count.setText(String.valueOf(cartCount));
+        } else {
+            count.setVisibility(View.GONE);
         }
     }
 }

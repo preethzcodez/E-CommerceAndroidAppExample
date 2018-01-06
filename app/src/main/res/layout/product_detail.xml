@@ -161,6 +161,7 @@
                     android:focusableInTouchMode="false"
                     android:src="@drawable/ic_plus_circle_outline_grey600_18dp" />
             </LinearLayout>
+            <include layout="@layout/border" />
         </LinearLayout>
     </ScrollView>
 
