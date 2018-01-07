@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.ListView;
 
 import com.preethzcodez.ecommerceexample.pojo.Cart;
 import com.preethzcodez.ecommerceexample.pojo.Category;
@@ -112,7 +111,7 @@ public class DB_Handler extends SQLiteOpenHelper {
             + PDT_ID + " INTEGER NOT NULL,"
             + VAR_ID + " INTEGER NOT NULL,"
             + QUANTITY + " INTEGER NOT NULL,"
-            + EMAIL +" TEXT NOT NULL"+")";
+            + EMAIL + " TEXT NOT NULL" + ")";
 
     // Create Shopping Cart Table
     private static final String CREATE_SHOPPING_CART_TABLE = "CREATE TABLE " + ShoppingCartTable + "("
@@ -126,7 +125,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     private static final String CREATE_WISHLIST_TABLE = "CREATE TABLE " + WishListTable + "("
             + ID + " INTEGER PRIMARY KEY,"
             + PDT_ID + " INTEGER NOT NULL,"
-            + EMAIL +" TEXT NOT NULL"+")";
+            + EMAIL + " TEXT NOT NULL" + ")";
 
     public DB_Handler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -447,7 +446,7 @@ public class DB_Handler extends SQLiteOpenHelper {
                         product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
 
                         // Get Item Wish Listed
-                        boolean isShortlisted = isShortlistedItem(id,email);
+                        boolean isShortlisted = isShortlistedItem(id, email);
                         product.setShortlisted(isShortlisted);
 
                         // Get Price Range
@@ -462,6 +461,7 @@ public class DB_Handler extends SQLiteOpenHelper {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        cursor.close();
 
         // return products list
         return productList;
@@ -583,7 +583,7 @@ public class DB_Handler extends SQLiteOpenHelper {
             product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
             tax.setName(cursor.getString(cursor.getColumnIndex(TAX_NAME)));
             tax.setValue(cursor.getDouble(cursor.getColumnIndex(TAX_VALUE)));
-            boolean isShortlistedItem = isShortlistedItem(product.getId(),email);
+            boolean isShortlistedItem = isShortlistedItem(product.getId(), email);
             product.setShortlisted(isShortlistedItem);
             product.setTax(tax);
         }
@@ -595,7 +595,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     }
 
     // Get Variant Details By Id
-    public Variant getVariantDetailsById(int id) {
+    private Variant getVariantDetailsById(int id) {
         Variant variant = new Variant();
 
         // Select All Query
@@ -850,12 +850,12 @@ public class DB_Handler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(PDT_ID, pdt_id);
         values.put(VAR_ID, var_id);
-        values.put(QUANTITY,quantity);
-        values.put(EMAIL,email);
+        values.put(QUANTITY, quantity);
+        values.put(EMAIL, email);
 
         // Check If Value Already Exists
-        String selectQuery = "SELECT * FROM " + ShoppingCartTable + " WHERE " + EMAIL + "=? AND "+PDT_ID+"=? AND "+VAR_ID+"=?";
-        Cursor cursor = db.rawQuery(selectQuery, new String[]{email,String.valueOf(pdt_id),String.valueOf(var_id)});
+        String selectQuery = "SELECT * FROM " + ShoppingCartTable + " WHERE " + EMAIL + "=? AND " + PDT_ID + "=? AND " + VAR_ID + "=?";
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{email, String.valueOf(pdt_id), String.valueOf(var_id)});
         if (cursor.moveToFirst()) {
             cursor.close();
             return -1;
@@ -883,7 +883,7 @@ public class DB_Handler extends SQLiteOpenHelper {
                 int variantId = cursor.getInt(cursor.getColumnIndex(VAR_ID));
                 int quantity = cursor.getInt(cursor.getColumnIndex(QUANTITY));
 
-                Product product = getProductDetailsById(productId,email);
+                Product product = getProductDetailsById(productId, email);
                 Variant variant = getVariantDetailsById(variantId);
 
                 cart.setId(id);
@@ -903,22 +903,19 @@ public class DB_Handler extends SQLiteOpenHelper {
     }
 
     // Delete Cart Item By Id
-    public boolean deleteCartItem(int id)
-    {
+    public boolean deleteCartItem(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(ShoppingCartTable,ID+"=?",new String[]{String.valueOf(id)}) > 0;
+        return db.delete(ShoppingCartTable, ID + "=?", new String[]{String.valueOf(id)}) > 0;
     }
 
     // Delete Cart Items
-    public void deleteCartItems()
-    {
+    public void deleteCartItems() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(ShoppingCartTable,null,null);
+        db.delete(ShoppingCartTable, null, null);
     }
 
     // Get Cart Item Count
-    public int getCartItemCount(String email)
-    {
+    public int getCartItemCount(String email) {
         // Select All Query
         String selectQuery = "SELECT  * FROM " + ShoppingCartTable + " WHERE " + EMAIL + "=?";
 
@@ -935,7 +932,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     public void insertOrderHistory(List<Cart> shoppingCart, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        for(int i=0;i<shoppingCart.size();i++) {
+        for (int i = 0; i < shoppingCart.size(); i++) {
             ContentValues values = new ContentValues();
             values.put(PDT_ID, shoppingCart.get(i).getProduct().getId());
             values.put(VAR_ID, shoppingCart.get(i).getVariant().getId());
@@ -947,8 +944,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     }
 
     // Add Item Into Wish List
-    public long shortlistItem(int pdt_id, String email)
-    {
+    public long shortlistItem(int pdt_id, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -958,15 +954,13 @@ public class DB_Handler extends SQLiteOpenHelper {
     }
 
     // Remove Item From Wish List
-    public boolean removeShortlistedItem(int pdt_id, String email)
-    {
+    public boolean removeShortlistedItem(int pdt_id, String email) {
         SQLiteDatabase db = this.getWritableDatabase();
-        return db.delete(WishListTable,PDT_ID+"=? AND "+EMAIL+"=?",new String[]{String.valueOf(pdt_id),email}) > 0;
+        return db.delete(WishListTable, PDT_ID + "=? AND " + EMAIL + "=?", new String[]{String.valueOf(pdt_id), email}) > 0;
     }
 
     // Get Wishlist Items
-    public List<Product> getShortListedItems(String email)
-    {
+    public List<Product> getShortListedItems(String email) {
         List<Product> productList = new ArrayList<>();
 
         // Select All Query
@@ -979,7 +973,7 @@ public class DB_Handler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 int pdt_id = cursor.getInt(cursor.getColumnIndex(PDT_ID));
-                Product product = getProductDetailsById(pdt_id,email);
+                Product product = getProductDetailsById(pdt_id, email);
                 String priceRange = getProductPriceRangeById(pdt_id);
                 product.setPrice_range(priceRange);
 
@@ -995,10 +989,9 @@ public class DB_Handler extends SQLiteOpenHelper {
     }
 
     // Check Product In Wish List
-    private boolean isShortlistedItem(int pdt_id,String email)
-    {
+    private boolean isShortlistedItem(int pdt_id, String email) {
         // Select All Query
-        String selectQuery = "SELECT  * FROM " + WishListTable + " WHERE " + EMAIL + "=? AND "+PDT_ID+"=?";
+        String selectQuery = "SELECT  * FROM " + WishListTable + " WHERE " + EMAIL + "=? AND " + PDT_ID + "=?";
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, new String[]{email, String.valueOf(pdt_id)});
@@ -1029,7 +1022,7 @@ public class DB_Handler extends SQLiteOpenHelper {
                 int variantId = cursor.getInt(cursor.getColumnIndex(VAR_ID));
                 int quantity = cursor.getInt(cursor.getColumnIndex(QUANTITY));
 
-                Product product = getProductDetailsById(productId,email);
+                Product product = getProductDetailsById(productId, email);
                 Variant variant = getVariantDetailsById(variantId);
 
                 cart.setId(id);
@@ -1046,5 +1039,15 @@ public class DB_Handler extends SQLiteOpenHelper {
 
         // return order items list
         return shoppingCart;
+    }
+
+    // Update Cart Item Quantity
+    public void updateItemQuantity(int quantity, int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(QUANTITY, quantity);
+        db.update(ShoppingCartTable, values, ID + "=?",
+                new String[]{String.valueOf(id)});
+        db.close();
     }
 }

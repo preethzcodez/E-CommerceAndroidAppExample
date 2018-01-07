@@ -149,4 +149,21 @@ public class MainActivity extends AppCompatActivity {
             count.setVisibility(View.GONE);
         }
     }
+
+    // Back Button Click
+    private void backButtonClick() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        try {
+            if (fragmentManager.findFragmentByTag("PRODUCT_LIST").isVisible()) {
+
+            } else if (fragmentManager.findFragmentByTag("SUB_CAT").isVisible()) {
+                fragmentTransaction.replace(R.id.content, new Categories());
+                fragmentTransaction.commit();
+                titleToolbar.setText("Categories");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
