@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:id="@+id/gridItemLayouut"
     android:clickable="true"
+    android:background="@color/white"
     android:focusable="true"
     android:focusableInTouchMode="false"
     android:layout_height="match_parent"

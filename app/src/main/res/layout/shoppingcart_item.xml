@@ -51,6 +51,17 @@
             android:text="Color: "
             android:textColor="@color/black"
             android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/quantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/title"
+            android:layout_below="@+id/color"
+            android:text="Color: "
+            android:visibility="gone"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
     </RelativeLayout>
 
     <ImageView
@@ -65,6 +76,7 @@
         android:src="@drawable/ic_close_grey600_24dp" />
 
     <LinearLayout
+        android:id="@+id/qtyLay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/itemLay"
@@ -122,6 +134,7 @@
         android:layout_below="@+id/price"
         android:layout_marginRight="@dimen/defaultMargin"
         android:text="(VAT : Rs.4.00)"
+        android:layout_marginBottom="@dimen/defaultMargin"
         android:textColor="@color/black"
         android:textSize="10sp" />
 </RelativeLayout>

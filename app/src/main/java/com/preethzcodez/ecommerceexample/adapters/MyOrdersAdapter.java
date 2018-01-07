@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,23 +24,13 @@ import java.util.List;
  * Created by Preeth on 1/7/2018.
  */
 
-public class ShoppingCartListAdapter extends BaseAdapter {
+public class MyOrdersAdapter extends BaseAdapter {
 
     Context context;
     private LayoutInflater inflater;
     private List<Cart> shoppingCart;
 
-    // interface to update payable amount
-    public interface UpdatePayableAmount {
-        void updatePayableAmount(List<Cart> shoppingCart);
-    }
-
-    // inteface to finish activity if cart empty
-    public interface MonitorListItems {
-        void finishActivity(List<Cart> shoppingCart);
-    }
-
-    public ShoppingCartListAdapter(Context context, List<Cart> shoppingCart) {
+    public MyOrdersAdapter(Context context, List<Cart> shoppingCart) {
         this.context = context;
         this.shoppingCart = shoppingCart;
         inflater = (LayoutInflater) context.
@@ -73,10 +64,9 @@ public class ShoppingCartListAdapter extends BaseAdapter {
         holder.color = (TextView) rowView.findViewById(R.id.color);
         holder.price = (TextView) rowView.findViewById(R.id.price);
         holder.tax = (TextView) rowView.findViewById(R.id.tax);
-        holder.qty = (TextView) rowView.findViewById(R.id.quantityValue);
+        holder.qty = (TextView) rowView.findViewById(R.id.quantity);
         holder.remove = (ImageView) rowView.findViewById(R.id.remove);
-        holder.minus = (ImageView) rowView.findViewById(R.id.minus);
-        holder.plus = (ImageView) rowView.findViewById(R.id.plus);
+        holder.qtyLay = (LinearLayout) rowView.findViewById(R.id.qtyLay);
 
         holder.title.setText(shoppingCart.get(position).getProduct().getName());
         holder.color.setText("Color: " + shoppingCart.get(position).getVariant().getColor());
@@ -98,7 +88,8 @@ public class ShoppingCartListAdapter extends BaseAdapter {
         final Double taxValue = shoppingCart.get(position).getProduct().getTax().getValue();
         final Double priceValue = Double.valueOf(shoppingCart.get(position).getVariant().getPrice());
 
-        holder.qty.setText(String.valueOf(quantity[0]));
+        holder.qty.setVisibility(View.VISIBLE);
+        holder.qty.setText(String.valueOf("Quantity: "+quantity[0]));
         holder.price.setText("Rs." + Util.formatDouble(calculatePrice(taxValue, priceValue, quantity[0])));
         holder.tax.setText("("+taxName + ": Rs." + taxValue+")");
 
@@ -114,61 +105,11 @@ public class ShoppingCartListAdapter extends BaseAdapter {
             }
         });
 
-        // Remove Item
-        holder.remove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        // Hide Remove Button
+        holder.remove.setVisibility(View.GONE);
 
-                // Delete Item From DB
-                DB_Handler db_handler = new DB_Handler(context);
-                if (db_handler.deleteCartItem(shoppingCart.get(position).getId())) {
-                    shoppingCart.remove(position);
-                    notifyDataSetChanged();
-
-                    if (context instanceof UpdatePayableAmount) {
-                        ((UpdatePayableAmount) context).updatePayableAmount(shoppingCart);
-                    }
-
-                    if (context instanceof MonitorListItems) {
-                        ((MonitorListItems) context).finishActivity(shoppingCart);
-                    }
-                } else {
-                    Toast.makeText(context, "error deleting item", Toast.LENGTH_LONG).show();
-                }
-            }
-        });
-
-        // Quantity Decrement Listener
-        holder.minus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (quantity[0] != 1) {
-                    quantity[0]--;
-                    shoppingCart.get(position).setItemQuantity(quantity[0]);
-                    holder.qty.setText(String.valueOf(quantity[0]));
-                    holder.price.setText("Rs." + Util.formatDouble(calculatePrice(taxValue, priceValue, quantity[0])));
-
-                    if (context instanceof UpdatePayableAmount) {
-                        ((UpdatePayableAmount) context).updatePayableAmount(shoppingCart);
-                    }
-                }
-            }
-        });
-
-        // Quantity Increment Listener
-        holder.plus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                quantity[0]++;
-                shoppingCart.get(position).setItemQuantity(quantity[0]);
-                holder.qty.setText(String.valueOf(quantity[0]));
-                holder.price.setText("Rs." + Util.formatDouble(calculatePrice(taxValue, priceValue, quantity[0])));
-
-                if (context instanceof UpdatePayableAmount) {
-                    ((UpdatePayableAmount) context).updatePayableAmount(shoppingCart);
-                }
-            }
-        });
+        // Hide Quantity Update Buttons
+        holder.qtyLay.setVisibility(View.GONE);
 
         return rowView;
     }
@@ -179,7 +120,8 @@ public class ShoppingCartListAdapter extends BaseAdapter {
 
     public class Holder {
         RelativeLayout itemLay;
+        LinearLayout qtyLay;
         TextView title, price, size, color, tax, qty;
-        ImageView remove, minus, plus;
+        ImageView remove;
     }
 }

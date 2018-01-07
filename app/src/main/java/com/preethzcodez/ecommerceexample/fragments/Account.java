@@ -1,16 +1,17 @@
 package com.preethzcodez.ecommerceexample.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.preethzcodez.ecommerceexample.R;
+import com.preethzcodez.ecommerceexample.activities.MyOrders;
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
 import com.preethzcodez.ecommerceexample.database.SessionManager;
 import com.preethzcodez.ecommerceexample.pojo.User;
@@ -24,6 +25,7 @@ public class Account extends Fragment {
 
     DB_Handler db_handler;
     TextView logout, name, email, mobile;
+    RelativeLayout orders;
 
     @Nullable
     @Override
@@ -39,22 +41,22 @@ public class Account extends Fragment {
         // Set Values
         setIds(view);
         setValues(user);
+        setClickListeners();
 
         return view;
     }
 
     // Set Ids
-    private void setIds(View view)
-    {
+    private void setIds(View view) {
         logout = (TextView) view.findViewById(R.id.logout);
         name = (TextView) view.findViewById(R.id.name);
         email = (TextView) view.findViewById(R.id.email);
         mobile = (TextView) view.findViewById(R.id.mobile);
+        orders = (RelativeLayout) view.findViewById(R.id.myOrdersLay);
     }
 
     // Set Values
-    private void setValues(User user)
-    {
+    private void setValues(User user) {
         // Name
         name.setText(user.getName());
 
@@ -63,5 +65,17 @@ public class Account extends Fragment {
 
         // Mobile
         mobile.setText(user.getMobile());
+    }
+
+    // Set Click Listeners
+    private void setClickListeners() {
+        // My Orders
+        orders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), MyOrders.class);
+                startActivity(intent);
+            }
+        });
     }
 }

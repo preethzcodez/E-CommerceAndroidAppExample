@@ -1009,4 +1009,42 @@ public class DB_Handler extends SQLiteOpenHelper {
         }
         return false;
     }
+
+    // Get Order History
+    public List<Cart> getOrders(String email) {
+        List<Cart> shoppingCart = new ArrayList<Cart>();
+
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + OrderHistoryTable + " WHERE " + EMAIL + "=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{email});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                Cart cart = new Cart();
+                int id = cursor.getInt(cursor.getColumnIndex(ID));
+                int productId = cursor.getInt(cursor.getColumnIndex(PDT_ID));
+                int variantId = cursor.getInt(cursor.getColumnIndex(VAR_ID));
+                int quantity = cursor.getInt(cursor.getColumnIndex(QUANTITY));
+
+                Product product = getProductDetailsById(productId,email);
+                Variant variant = getVariantDetailsById(variantId);
+
+                cart.setId(id);
+                cart.setItemQuantity(quantity);
+                cart.setProduct(product);
+                cart.setVariant(variant);
+
+                // Adding to list
+                shoppingCart.add(cart);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // return order items list
+        return shoppingCart;
+    }
 }

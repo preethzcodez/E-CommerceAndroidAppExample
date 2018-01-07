@@ -19,6 +19,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"/>
+        <activity android:name=".activities.MyOrders"/>
         <activity android:name=".activities.ShoppingCart"/>
         <activity android:name=".activities.ProductDetails"/>
         <service android:name=".service.SyncDBService"/>

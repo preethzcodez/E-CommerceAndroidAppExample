@@ -21,11 +21,7 @@ import com.preethzcodez.ecommerceexample.fragments.Account;
 import com.preethzcodez.ecommerceexample.fragments.Categories;
 import com.preethzcodez.ecommerceexample.fragments.Products;
 import com.preethzcodez.ecommerceexample.fragments.WishList;
-import com.preethzcodez.ecommerceexample.pojo.Product;
 import com.preethzcodez.ecommerceexample.utils.Constants;
-
-import java.io.Serializable;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,13 +80,22 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+            // Prevent Reload Same Fragment
             FragmentManager fm = getSupportFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
 
             switch (item.getItemId()) {
                 case R.id.nav_home: // Home
-                    callProductsFragment();
-                    titleToolbar.setText("Home");
+                    // Prevent Reload
+                    try {
+                        if (!fm.findFragmentByTag("HOME").isVisible()) {
+                            callProductsFragment();
+                            titleToolbar.setText("Home");
+                        }
+                    } catch (NullPointerException e) {
+                        callProductsFragment();
+                        titleToolbar.setText("Home");
+                    }
                     return true;
 
                 case R.id.nav_categories: // Categories
@@ -126,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.content, products);
+        ft.replace(R.id.content, products, "HOME");
         ft.commit();
     }
 
