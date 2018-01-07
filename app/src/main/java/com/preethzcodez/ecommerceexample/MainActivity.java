@@ -117,12 +117,9 @@ public class MainActivity extends AppCompatActivity {
 
     // call products fragment
     private void callProductsFragment() {
-        // get product list
-        List<Product> productList = db_handler.getProductsList(0, null, null, 0,sessionManager.getSessionData(Constants.SESSION_EMAIL));
 
         Bundle args = new Bundle();
         args.putInt(Constants.CAT_ID_KEY, 0);
-        args.putSerializable(Constants.PDT_KEY, (Serializable) productList);
 
         Products products = new Products();
         products.setArguments(args);

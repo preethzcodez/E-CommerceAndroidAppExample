@@ -71,7 +71,7 @@ public class ProductDetails extends AppCompatActivity {
 
         // Get Product Details By Id
         db_handler = new DB_Handler(this);
-        product = db_handler.getProductDetailsById(id);
+        product = db_handler.getProductDetailsById(id, userEmail);
 
         setIds();
         setValues();
@@ -140,6 +140,34 @@ public class ProductDetails extends AppCompatActivity {
 
     // Set Values
     private void setValues() {
+
+        // WishList Icon
+        final ImageView heart = (ImageView) findViewById(R.id.heart);
+        if (product.getShortlisted()) {
+            heart.setImageResource(R.drawable.ic_heart_grey);
+        }
+
+        // Wishlist Icon Click
+        heart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Add / Remove Item From Wish List
+                if (!product.getShortlisted()) {
+                    heart.setImageResource(R.drawable.ic_heart_grey);
+                    if (db_handler.shortlistItem(product.getId(), userEmail) > 0) {
+                        product.setShortlisted(true);
+                        Toast.makeText(getApplicationContext(), "Item Added To Wish List", Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    heart.setImageResource(R.drawable.ic_heart_grey600_24dp);
+                    if (db_handler.removeShortlistedItem(product.getId(), userEmail)) {
+                        product.setShortlisted(false);
+                        Toast.makeText(getApplicationContext(), "Item Removed From Wish List", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
+
         // Title
         TextView Title = (TextView) findViewById(R.id.title);
         Title.setText(product.getName());
@@ -341,8 +369,7 @@ public class ProductDetails extends AppCompatActivity {
     }
 
     // Update Cart Item Count In Toolbar
-    private void updateCartCount()
-    {
+    private void updateCartCount() {
         cartCount = db_handler.getCartItemCount(sessionManager.getSessionData(Constants.SESSION_EMAIL));
         TextView count = (TextView) findViewById(R.id.count);
         if (cartCount > 0) {

@@ -567,7 +567,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     }*/
 
     // Get Product Details By Id
-    public Product getProductDetailsById(int id) {
+    public Product getProductDetailsById(int id, String email) {
         Product product = new Product();
         Tax tax = new Tax();
 
@@ -583,6 +583,8 @@ public class DB_Handler extends SQLiteOpenHelper {
             product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
             tax.setName(cursor.getString(cursor.getColumnIndex(TAX_NAME)));
             tax.setValue(cursor.getDouble(cursor.getColumnIndex(TAX_VALUE)));
+            boolean isShortlistedItem = isShortlistedItem(product.getId(),email);
+            product.setShortlisted(isShortlistedItem);
             product.setTax(tax);
         }
         cursor.close();
@@ -881,7 +883,7 @@ public class DB_Handler extends SQLiteOpenHelper {
                 int variantId = cursor.getInt(cursor.getColumnIndex(VAR_ID));
                 int quantity = cursor.getInt(cursor.getColumnIndex(QUANTITY));
 
-                Product product = getProductDetailsById(productId);
+                Product product = getProductDetailsById(productId,email);
                 Variant variant = getVariantDetailsById(variantId);
 
                 cart.setId(id);
@@ -977,7 +979,7 @@ public class DB_Handler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 int pdt_id = cursor.getInt(cursor.getColumnIndex(PDT_ID));
-                Product product = getProductDetailsById(pdt_id);
+                Product product = getProductDetailsById(pdt_id,email);
                 String priceRange = getProductPriceRangeById(pdt_id);
                 product.setPrice_range(priceRange);
 

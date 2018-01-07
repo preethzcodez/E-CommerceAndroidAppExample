@@ -92,13 +92,8 @@ public class SubcategoryGridAdapter extends BaseAdapter {
                     ft.replace(R.id.content, subcategories);
                     ft.commit();
                 } else {
-                    // get products list by category
-                    SessionManager sessionManager = new SessionManager(context);
-                    List<Product> productsList = db_handler.getProductsList(0, null, null, id, sessionManager.getSessionData(Constants.SESSION_EMAIL));
-
                     // add bundle arguments
                     bundle.putInt(Constants.CAT_ID_KEY, id);
-                    bundle.putSerializable(Constants.PDT_KEY, (Serializable) productsList);
 
                     Products products = new Products();
                     products.setArguments(bundle);

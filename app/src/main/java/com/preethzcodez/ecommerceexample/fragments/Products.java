@@ -43,6 +43,8 @@ public class Products extends Fragment {
     GridView productsGrid;
     List<String> sizeFilter = new ArrayList<>();
     List<String> colorFilter = new ArrayList<>();
+    ProductListAdapter productListAdapter;
+    List<Product> productList;
 
     @Nullable
     @Override
@@ -55,14 +57,32 @@ public class Products extends Fragment {
         setSortListener();
         setFilterListener();
 
-        // get data
+        // get category id
         Bundle args = getArguments();
         cat_id = args.getInt(Constants.CAT_ID_KEY);
-        List<Product> productList = (List<Product>) args.getSerializable(Constants.PDT_KEY);
+
+        // Get Data and Fill Grid
         sortByText.setText(sortByArray[0]);
-        fillGridView(productList); // Fill Grid View
+        fillGridView();
         return view;
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // Update Items
+        try {
+            DB_Handler db_handler = new DB_Handler(getActivity());
+            SessionManager sessionManager = new SessionManager(getActivity());
+            List<Product> productList = db_handler.getProductsList(sortById, sizeFilter, colorFilter, cat_id, sessionManager.getSessionData(Constants.SESSION_EMAIL));
+            this.productList.clear();
+            this.productList.addAll(productList);
+            productListAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // Set Ids
@@ -74,10 +94,13 @@ public class Products extends Fragment {
     }
 
     // Fill GridView With Data
-    private void fillGridView(List<Product> productList) {
-        // fill gridview with data
+    private void fillGridView() {
+        SessionManager sessionManager = new SessionManager(getActivity());
+        DB_Handler db_handler = new DB_Handler(getActivity());
+        productList = db_handler.getProductsList(sortById, sizeFilter, colorFilter, cat_id, sessionManager.getSessionData(Constants.SESSION_EMAIL));
         productsGrid.setNumColumns(2);
-        productsGrid.setAdapter(new ProductListAdapter(getActivity(), productList));
+        productListAdapter = new ProductListAdapter(getActivity(), productList);
+        productsGrid.setAdapter(productListAdapter);
     }
 
     // Set Sort Listener
@@ -105,9 +128,7 @@ public class Products extends Fragment {
                         sortByText.setText(sortByArray[sortById]);
 
                         // Reload Products List
-                        SessionManager sessionManager = new SessionManager(getActivity());
-                        DB_Handler db_handler = new DB_Handler(getActivity());
-                        fillGridView(db_handler.getProductsList(sortById, sizeFilter, colorFilter, cat_id,sessionManager.getSessionData(Constants.SESSION_EMAIL)));
+                        fillGridView();
                         dialog.dismiss();
                     }
                 });
@@ -182,9 +203,7 @@ public class Products extends Fragment {
                     public void onClick(View view) {
 
                         // Reload Products List By Filter
-                        SessionManager sessionManager = new SessionManager(getActivity());
-                        DB_Handler db_handler = new DB_Handler(getActivity());
-                        fillGridView(db_handler.getProductsList(sortById, sizeFilter, colorFilter, cat_id,sessionManager.getSessionData(Constants.SESSION_EMAIL)));
+                        fillGridView();
                         dialog.dismiss();
                     }
                 });
