@@ -1,12 +1,11 @@
 package com.preethzcodez.ecommerceexample.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.preethzcodez.ecommerceexample.R;
@@ -17,16 +16,15 @@ import com.preethzcodez.ecommerceexample.utils.ExpandableHeightGridView;
 import java.util.List;
 
 /**
- * Created by Preeth on 1/4/2018.
+ * Created by Preeth on 1/4/2018
  */
 
 public class CategoryListAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater inflater;
-    List<Category> categoryList;
-    List<Category> subCategoryList;
-    DB_Handler db_handler;
+    private List<Category> categoryList;
+    private DB_Handler db_handler;
 
     public CategoryListAdapter(Context context, List<Category> categoryList)
     {
@@ -51,21 +49,20 @@ public class CategoryListAdapter extends BaseAdapter {
         return i;
     }
 
+    @SuppressLint({"ViewHolder", "InflateParams"})
     @Override
     public View getView(int position, View view, ViewGroup viewGroup) {
         Holder holder = new Holder();
         View rowView;
 
         rowView = inflater.inflate(R.layout.categories_list_item, null);
-        holder.category = (TextView) rowView.findViewById(R.id.category);
-
+        holder.category = rowView.findViewById(R.id.category);
         holder.category.setText(categoryList.get(position).getName());
-        //holder.img.setImageResource(imageId[position]);
 
         List<Category> subCategoryList = db_handler.getSubcategoryList(categoryList.get(position).getId());
 
         // fill gridview with data
-        holder.expandableHeightGridView=(ExpandableHeightGridView) rowView.findViewById(R.id.subcategories);
+        holder.expandableHeightGridView= rowView.findViewById(R.id.subcategories);
         holder.expandableHeightGridView.setAdapter(new SubcategoryGridAdapter(context, subCategoryList));
         holder.expandableHeightGridView.setExpanded(true);
 

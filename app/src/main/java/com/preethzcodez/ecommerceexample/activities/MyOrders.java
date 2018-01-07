@@ -19,7 +19,7 @@ import com.preethzcodez.ecommerceexample.utils.Constants;
 import java.util.List;
 
 /**
- * Created by Preeth on 1/7/2018.
+ * Created by Preeth on 1/7/2018
  */
 
 public class MyOrders extends AppCompatActivity {
@@ -30,15 +30,25 @@ public class MyOrders extends AppCompatActivity {
         setContentView(R.layout.myorders);
 
         // Set Toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Set Title
-        TextView titleToolbar = (TextView) findViewById(R.id.titleToolbar);
-        titleToolbar.setText("My Orders");
+        TextView titleToolbar = findViewById(R.id.titleToolbar);
+        titleToolbar.setText(R.string.my_orders);
+
+        // Back Button
+        ImageView backButton = findViewById(R.id.backButton);
+        backButton.setVisibility(View.VISIBLE);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         // Hide Cart Icon
-        ImageView cart = (ImageView) findViewById(R.id.cart);
+        ImageView cart = findViewById(R.id.cart);
         cart.setVisibility(View.GONE);
 
         // Get Orders From DB
@@ -47,7 +57,13 @@ public class MyOrders extends AppCompatActivity {
         List<Cart> orderHistory = db_handler.getOrders(sessionManager.getSessionData(Constants.SESSION_EMAIL));
 
         // Fill ListView
-        ListView listView = (ListView) findViewById(R.id.listview);
+        ListView listView = findViewById(R.id.listview);
         listView.setAdapter(new MyOrdersAdapter(this,orderHistory));
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(0,0);
     }
 }

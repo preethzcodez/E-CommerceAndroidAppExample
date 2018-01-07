@@ -1,5 +1,7 @@
 package com.preethzcodez.ecommerceexample.adapters;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -26,7 +28,7 @@ import java.util.List;
 
 public class ProductListAdapter extends BaseAdapter {
 
-    Context context;
+    private Context context;
     private LayoutInflater inflater;
     private List<Product> productList;
 
@@ -52,6 +54,7 @@ public class ProductListAdapter extends BaseAdapter {
         return i;
     }
 
+    @SuppressLint({"ViewHolder", "InflateParams"})
     @Override
     public View getView(final int position, View view, ViewGroup viewGroup) {
         // TODO Auto-generated method stub
@@ -59,21 +62,23 @@ public class ProductListAdapter extends BaseAdapter {
         View rowView;
 
         rowView = inflater.inflate(R.layout.product_grid_item, null);
-        holder.name = (TextView) rowView.findViewById(R.id.name);
-        holder.price = (TextView) rowView.findViewById(R.id.price);
-        holder.heart = (ImageView) rowView.findViewById(R.id.heart);
+        holder.name = rowView.findViewById(R.id.name);
+        holder.price = rowView.findViewById(R.id.price);
+        holder.heart = rowView.findViewById(R.id.heart);
 
         holder.name.setText(productList.get(position).getName());
         holder.price.setText(productList.get(position).getPrice_range());
 
         // Product Item Click
-        holder.itemLay = (RelativeLayout) rowView.findViewById(R.id.itemLay);
+        holder.itemLay = rowView.findViewById(R.id.itemLay);
         holder.itemLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, ProductDetails.class);
                 intent.putExtra("ProductId", productList.get(position).getId());
                 context.startActivity(intent);
+                Activity activity = (Activity) context;
+                activity.overridePendingTransition(0,0);
             }
         });
 

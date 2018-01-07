@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">ECommerceExample</string>
-    <string name="splash_text">E-Commerce Shopping</string>
+    <string name="splash_text">e - Shopping</string>
     
     <!-- Error Messages -->
     <string name="NoInternet">Please check your internet connection</string>
@@ -9,6 +9,7 @@
     <string name="EmailError">"Email Id not valid"</string>
     <string name="EmailExistsError">"Email Id Already Exists"</string>
     <string name="InvalidUser">Invalid email id or password</string>
+    <string name="retry">RETRY</string>
 
     <!-- Bottom Navigation Titles -->
     <string name="TitleHome">Home</string>
@@ -26,6 +27,13 @@
     <!-- Product Detail Page -->
     <string name="buy">Buy Now</string>
     <string name="cart">Add To Cart</string>
+    <string name="cart_empty">Cart Is Empty</string>
+    <string name="add_success">Successfully Added</string>
+    <string name="item_exists">Item Already Added</string>
+    <string name="color_select">Please Select Color</string>
+    <string name="size_select">Please Select Size</string>
+    <string name="item_add_wishlist">Item Added To Wish List</string>
+    <string name="item_rem_wishlist">Item Removed From Wish List</string>
 
     <!-- Sign In / Sign Up -->
     <string name="signin">Sign In</string>
@@ -35,5 +43,10 @@
     <string name="password">Password</string>
     <string name="mobile">Mobile Number</string>
 
+    <!-- Shopping Cart Page -->
     <string name="place_order">Place Order</string>
+    <string name="shopping_cart">Shopping Cart</string>
+
+    <!-- My Orders Page -->
+    <string name="my_orders">My Orders</string>
 </resources>

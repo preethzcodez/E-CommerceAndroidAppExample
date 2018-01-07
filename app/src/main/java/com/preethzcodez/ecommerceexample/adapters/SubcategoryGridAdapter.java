@@ -1,5 +1,6 @@
 package com.preethzcodez.ecommerceexample.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -14,26 +15,24 @@ import android.widget.TextView;
 import com.preethzcodez.ecommerceexample.MainActivity;
 import com.preethzcodez.ecommerceexample.R;
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
-import com.preethzcodez.ecommerceexample.database.SessionManager;
 import com.preethzcodez.ecommerceexample.fragments.Products;
 import com.preethzcodez.ecommerceexample.fragments.Subcategories;
 import com.preethzcodez.ecommerceexample.pojo.Category;
-import com.preethzcodez.ecommerceexample.pojo.Product;
 import com.preethzcodez.ecommerceexample.utils.Constants;
 
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by Preeth on 1/4/2018.
+ * Created by Preeth on 1/4/2018
  */
 
 public class SubcategoryGridAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater inflater;
-    List<Category> subCategoryList;
-    DB_Handler db_handler;
+    private List<Category> subCategoryList;
+    private DB_Handler db_handler;
 
     public SubcategoryGridAdapter(Context context, List<Category> subCategoryList) {
         this.context = context;
@@ -57,16 +56,17 @@ public class SubcategoryGridAdapter extends BaseAdapter {
         return i;
     }
 
+    @SuppressLint({"ViewHolder", "InflateParams"})
     @Override
     public View getView(final int position, View view, ViewGroup viewGroup) {
         Holder holder = new Holder();
         View rowView;
 
         rowView = inflater.inflate(R.layout.categories_grid_item, null);
-        holder.category = (TextView) rowView.findViewById(R.id.name);
+        holder.category = rowView.findViewById(R.id.name);
         holder.category.setText(subCategoryList.get(position).getName());
 
-        holder.gridItemLayout = (RelativeLayout) rowView.findViewById(R.id.gridItemLayouut);
+        holder.gridItemLayout = rowView.findViewById(R.id.gridItemLayouut);
         holder.gridItemLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,21 +84,25 @@ public class SubcategoryGridAdapter extends BaseAdapter {
                 if (childCategories.size() > 0) {
 
                     // add bundle arguments
+                    bundle.putString(Constants.TITLE,subCategoryList.get(position).getName());
                     bundle.putSerializable(Constants.CAT_KEY, (Serializable) childCategories);
 
                     Subcategories subcategories = new Subcategories();
                     subcategories.setArguments(bundle);
 
-                    ft.replace(R.id.content, subcategories);
+                    ft.replace(R.id.content, subcategories, Constants.FRAG_SUBCAT);
+                    ft.addToBackStack(null);
                     ft.commit();
                 } else {
                     // add bundle arguments
                     bundle.putInt(Constants.CAT_ID_KEY, id);
+                    bundle.putString(Constants.TITLE,subCategoryList.get(position).getName());
 
                     Products products = new Products();
                     products.setArguments(bundle);
 
-                    ft.replace(R.id.content, products);
+                    ft.replace(R.id.content, products, Constants.FRAG_PDT);
+                    ft.addToBackStack(null);
                     ft.commit();
                 }
             }

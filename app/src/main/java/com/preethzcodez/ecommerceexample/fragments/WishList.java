@@ -7,22 +7,19 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.ListView;
 
 import com.preethzcodez.ecommerceexample.R;
-import com.preethzcodez.ecommerceexample.adapters.SubcategoryGridAdapter;
 import com.preethzcodez.ecommerceexample.adapters.WishlistAdapter;
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
 import com.preethzcodez.ecommerceexample.database.SessionManager;
-import com.preethzcodez.ecommerceexample.pojo.Category;
 import com.preethzcodez.ecommerceexample.pojo.Product;
 import com.preethzcodez.ecommerceexample.utils.Constants;
 
 import java.util.List;
 
 /**
- * Created by Preeth on 1/7/2018.
+ * Created by Preeth on 1/7/2018
  */
 
 public class WishList extends Fragment {
@@ -39,7 +36,7 @@ public class WishList extends Fragment {
         List<Product> productList = db_handler.getShortListedItems(sessionManager.getSessionData(Constants.SESSION_EMAIL));
 
         // fill listview with data
-        ListView listView=(ListView) view.findViewById(R.id.listview);
+        ListView listView= view.findViewById(R.id.listview);
         listView.setAdapter(new WishlistAdapter(getActivity(), productList));
         return view;
     }

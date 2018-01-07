@@ -21,14 +21,15 @@ import com.preethzcodez.ecommerceexample.database.DB_Handler;
 import com.preethzcodez.ecommerceexample.database.SessionManager;
 import com.preethzcodez.ecommerceexample.fragments.SignIn;
 import com.preethzcodez.ecommerceexample.fragments.SignUp;
+import com.preethzcodez.ecommerceexample.interfaces.FinishActivity;
 import com.preethzcodez.ecommerceexample.service.SyncDBService;
 import com.preethzcodez.ecommerceexample.utils.Constants;
 
 /**
- * Created by Preeth on 1/3/2018.
+ * Created by Preeth on 1/3/2018
  */
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends AppCompatActivity implements FinishActivity {
 
     DB_Handler db_handler;
     Button signIn, signUp;
@@ -55,10 +56,10 @@ public class SplashActivity extends AppCompatActivity {
 
     // Set Ids
     private void setIds() {
-        signIn = (Button) findViewById(R.id.signin);
-        signUp = (Button) findViewById(R.id.signup);
-        bottomLay = (TableLayout) findViewById(R.id.bottomLay);
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLay);
+        signIn = findViewById(R.id.signin);
+        signUp = findViewById(R.id.signup);
+        bottomLay = findViewById(R.id.bottomLay);
+        coordinatorLayout = findViewById(R.id.coordinatorLay);
     }
 
     // Set Click Listeners
@@ -69,7 +70,9 @@ public class SplashActivity extends AppCompatActivity {
             public void onClick(View view) {
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
+                ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
                 ft.replace(R.id.fragment, new SignIn());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });
@@ -80,15 +83,16 @@ public class SplashActivity extends AppCompatActivity {
             public void onClick(View view) {
                 FragmentManager fm = getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
+                ft.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left);
                 ft.replace(R.id.fragment, new SignUp());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });
     }
 
     // Start Intent Service To Fetch Data
-    private void startIntentService()
-    {
+    private void startIntentService() {
         Intent intent = new Intent(getApplicationContext(), SyncDBService.class);
         intent.putExtra("messenger", new Messenger(handler));
         startService(intent);
@@ -113,6 +117,7 @@ public class SplashActivity extends AppCompatActivity {
     private void loadNextActivity() {
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(i);
+        overridePendingTransition(0, 0);
         finish();
     }
 
@@ -130,9 +135,10 @@ public class SplashActivity extends AppCompatActivity {
                         // Show Error In Snack Bar
                         try {
                             String message = reply.getString("message");
+                            assert message != null;
                             snackbar = Snackbar
                                     .make(coordinatorLayout, message, Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("RETRY", new View.OnClickListener() {
+                                    .setAction(R.string.retry, new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             snackbar.dismiss();
@@ -143,9 +149,7 @@ public class SplashActivity extends AppCompatActivity {
                             // Changing message text color
                             snackbar.setActionTextColor(Color.RED);
                             snackbar.show();
-                        }
-                        catch (Exception e)
-                        {
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -154,5 +158,11 @@ public class SplashActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void finishActivity() {
+        overridePendingTransition(0, 0);
+        finish();
     }
 }

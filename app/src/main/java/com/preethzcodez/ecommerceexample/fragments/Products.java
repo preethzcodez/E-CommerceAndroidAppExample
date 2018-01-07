@@ -1,7 +1,9 @@
 package com.preethzcodez.ecommerceexample.fragments;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,6 +25,8 @@ import com.preethzcodez.ecommerceexample.adapters.ProductListAdapter;
 import com.preethzcodez.ecommerceexample.adapters.SortItemListAdapter;
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
 import com.preethzcodez.ecommerceexample.database.SessionManager;
+import com.preethzcodez.ecommerceexample.interfaces.ShowBackButton;
+import com.preethzcodez.ecommerceexample.interfaces.ToolbarTitle;
 import com.preethzcodez.ecommerceexample.pojo.Product;
 import com.preethzcodez.ecommerceexample.utils.Constants;
 
@@ -31,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Preeth on 1/3/2018.
+ * Created by Preeth on 1/3/2018
  */
 
 public class Products extends Fragment {
@@ -46,9 +50,19 @@ public class Products extends Fragment {
     ProductListAdapter productListAdapter;
     List<Product> productList;
 
+    ToolbarTitle toolbarTitleCallback;
+    ShowBackButton showBackButtonCallback;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        toolbarTitleCallback = (ToolbarTitle) context;
+        showBackButtonCallback = (ShowBackButton) context;
+    }
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.product_list, container, false);
@@ -59,7 +73,14 @@ public class Products extends Fragment {
 
         // get category id
         Bundle args = getArguments();
+        assert args != null;
         cat_id = args.getInt(Constants.CAT_ID_KEY);
+
+        if (cat_id > 0) {
+            // Show Back Button and Set Title
+            showBackButtonCallback.showBackButton();
+            toolbarTitleCallback.setToolbarTitle(args.getString(Constants.TITLE));
+        }
 
         // Get Data and Fill Grid
         sortByText.setText(sortByArray[0]);
@@ -87,10 +108,10 @@ public class Products extends Fragment {
 
     // Set Ids
     private void setIds(View view) {
-        sort = (RelativeLayout) view.findViewById(R.id.sortLay);
-        filter = (RelativeLayout) view.findViewById(R.id.filterLay);
-        sortByText = (TextView) view.findViewById(R.id.sortBy);
-        productsGrid = (GridView) view.findViewById(R.id.productsGrid);
+        sort = view.findViewById(R.id.sortLay);
+        filter = view.findViewById(R.id.filterLay);
+        sortByText = view.findViewById(R.id.sortBy);
+        productsGrid = view.findViewById(R.id.productsGrid);
     }
 
     // Fill GridView With Data
@@ -106,13 +127,14 @@ public class Products extends Fragment {
     // Set Sort Listener
     private void setSortListener() {
         sort.setOnClickListener(new View.OnClickListener() {
+            @SuppressWarnings("ConstantConditions")
             @Override
             public void onClick(View view) {
                 // Create Dialog
                 final Dialog dialog = new Dialog(getActivity());
                 dialog.setContentView(R.layout.listview);
 
-                ListView listView = (ListView) dialog.findViewById(R.id.listview);
+                ListView listView = dialog.findViewById(R.id.listview);
                 listView.setAdapter(new SortItemListAdapter(getActivity(), sortByArray, sortById));
                 listView.setDividerHeight(1);
                 listView.setFocusable(true);
@@ -139,6 +161,7 @@ public class Products extends Fragment {
     // Set Filter Listener
     private void setFilterListener() {
         filter.setOnClickListener(new View.OnClickListener() {
+            @SuppressWarnings("ConstantConditions")
             @Override
             public void onClick(View view) {
                 // Create Dialog
@@ -161,7 +184,7 @@ public class Products extends Fragment {
                 headers.add("Size");
                 headers.add("Color");
 
-                final ExpandableListView listView = (ExpandableListView) dialog.findViewById(R.id.expandableList);
+                final ExpandableListView listView = dialog.findViewById(R.id.expandableList);
                 final FilterItemListAdapter filterItemListAdapter = new FilterItemListAdapter(getActivity(), headers, listHashMap, sizeFilter, colorFilter);
                 listView.setAdapter(filterItemListAdapter);
                 listView.setDividerHeight(1);
@@ -197,7 +220,7 @@ public class Products extends Fragment {
                 });
 
                 // Filter Apply Button Click
-                Button apply = (Button) dialog.findViewById(R.id.apply);
+                Button apply = dialog.findViewById(R.id.apply);
                 apply.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -209,7 +232,7 @@ public class Products extends Fragment {
                 });
 
                 // Clear All Button Click
-                Button clear = (Button) dialog.findViewById(R.id.clear);
+                Button clear = dialog.findViewById(R.id.clear);
                 clear.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -230,7 +253,7 @@ public class Products extends Fragment {
                 });
 
                 // Close Button
-                final ImageView close = (ImageView) dialog.findViewById(R.id.close);
+                final ImageView close = dialog.findViewById(R.id.close);
                 close.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {

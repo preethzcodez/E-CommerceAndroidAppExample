@@ -12,9 +12,14 @@ public class Constants {
     // Bundle Argument Keys
     public static final String CAT_ID_KEY = "category_id";
     public static final String CAT_KEY = "subcategories";
-    public static final String PDT_KEY = "products";
+    public static final String TITLE = "title";
 
     // Session Key
     public static final String SESSION_EMAIL = "session_email";
     public static final String SESSION_PASSWORD = "session_password";
+
+    // Fragment Tags
+    public static final String FRAG_HOME = "HOME";
+    public static final String FRAG_SUBCAT = "SUB_CAT";
+    public static final String FRAG_PDT = "PRODUCTS";
 }

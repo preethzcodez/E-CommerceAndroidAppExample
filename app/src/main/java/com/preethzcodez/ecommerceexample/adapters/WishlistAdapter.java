@@ -1,5 +1,6 @@
 package com.preethzcodez.ecommerceexample.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -20,12 +21,12 @@ import com.preethzcodez.ecommerceexample.utils.Constants;
 import java.util.List;
 
 /**
- * Created by Preeth on 1/7/2018.
+ * Created by Preeth on 1/7/2018
  */
 
 public class WishlistAdapter extends BaseAdapter {
 
-    Context context;
+    private Context context;
     private LayoutInflater inflater;
     private List<Product> productList;
 
@@ -51,6 +52,7 @@ public class WishlistAdapter extends BaseAdapter {
         return i;
     }
 
+    @SuppressLint({"ViewHolder", "InflateParams"})
     @Override
     public View getView(final int position, View view, ViewGroup viewGroup) {
         // TODO Auto-generated method stub
@@ -58,15 +60,15 @@ public class WishlistAdapter extends BaseAdapter {
         View rowView;
 
         rowView = inflater.inflate(R.layout.wishlist_item, null);
-        holder.title = (TextView) rowView.findViewById(R.id.title);
-        holder.price = (TextView) rowView.findViewById(R.id.price);
-        holder.remove = (ImageView) rowView.findViewById(R.id.remove);
+        holder.title = rowView.findViewById(R.id.title);
+        holder.price = rowView.findViewById(R.id.price);
+        holder.remove = rowView.findViewById(R.id.remove);
 
         holder.title.setText(productList.get(position).getName());
         holder.price.setText(productList.get(position).getPrice_range());
 
         // Product Item Click
-        holder.itemLay = (RelativeLayout) rowView.findViewById(R.id.itemLay);
+        holder.itemLay = rowView.findViewById(R.id.itemLay);
         holder.itemLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

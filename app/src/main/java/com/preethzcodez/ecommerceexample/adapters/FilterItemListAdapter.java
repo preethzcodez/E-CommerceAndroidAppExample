@@ -1,5 +1,6 @@
 package com.preethzcodez.ecommerceexample.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -16,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by Preeth on 1/6/2018.
+ * Created by Preeth on 1/6/2018
  */
 
 public class FilterItemListAdapter extends BaseExpandableListAdapter {
@@ -25,7 +26,7 @@ public class FilterItemListAdapter extends BaseExpandableListAdapter {
     private List<String> _listDataHeader; // header titles
     // child data in format of header title, child title
     private HashMap<String, List<String>> _listDataChild;
-    List<String> sizeFilter, colorFilter;
+    private List<String> sizeFilter, colorFilter;
 
     public FilterItemListAdapter(Context context, List<String> listDataHeader,
                                  HashMap<String, List<String>> listChildData, List<String> sizeFilter, List<String> colorFilter) {
@@ -47,6 +48,7 @@ public class FilterItemListAdapter extends BaseExpandableListAdapter {
         return childPosition;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
@@ -56,14 +58,15 @@ public class FilterItemListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            assert infalInflater != null;
             convertView = infalInflater.inflate(R.layout.sort_filter_listitem, null);
         }
 
-        TextView txtListChild = (TextView) convertView
+        TextView txtListChild = convertView
                 .findViewById(R.id.name);
 
         // Set Tick Visibility
-        ImageView img = (ImageView) convertView.findViewById(R.id.tick);
+        ImageView img = convertView.findViewById(R.id.tick);
         switch (groupPosition) {
             case 0:
                 try {
@@ -115,6 +118,7 @@ public class FilterItemListAdapter extends BaseExpandableListAdapter {
         return groupPosition;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
@@ -122,11 +126,12 @@ public class FilterItemListAdapter extends BaseExpandableListAdapter {
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            assert infalInflater != null;
             convertView = infalInflater.inflate(R.layout.sort_filter_listitem, null);
         }
 
         // Set Arrow
-        ImageView arrow = (ImageView) convertView.findViewById(R.id.arrow);
+        ImageView arrow = convertView.findViewById(R.id.arrow);
         arrow.setVisibility(View.VISIBLE);
         if (isExpanded) {
             arrow.setImageResource(R.drawable.ic_chevron_down_grey600_24dp);
@@ -135,7 +140,7 @@ public class FilterItemListAdapter extends BaseExpandableListAdapter {
         }
 
         // Set Count
-        TextView count = (TextView) convertView
+        TextView count = convertView
                 .findViewById(R.id.count);
         switch (groupPosition) {
             case 0: // Size
@@ -166,14 +171,14 @@ public class FilterItemListAdapter extends BaseExpandableListAdapter {
         }
 
         // Set Header
-        TextView lblListHeader = (TextView) convertView
+        TextView lblListHeader = convertView
                 .findViewById(R.id.name);
         lblListHeader.setTypeface(null, Typeface.BOLD);
         lblListHeader.setTextColor(Color.BLACK);
         lblListHeader.setTextSize(16);
         lblListHeader.setText(headerTitle);
 
-        ImageView tick = (ImageView) convertView.findViewById(R.id.tick);
+        ImageView tick = convertView.findViewById(R.id.tick);
         tick.setVisibility(View.GONE);
 
         return convertView;

@@ -30,7 +30,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 
 /**
- * Created by Preeth on 1/6/2018.
+ * Created by Preeth on 1/6/2018
  */
 
 public class SyncDBService extends IntentService {

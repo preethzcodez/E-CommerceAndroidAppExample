@@ -1,14 +1,7 @@
 package com.preethzcodez.ecommerceexample.pojo;
 
-import android.content.Intent;
-
-import com.preethzcodez.ecommerceexample.pojo.Product;
-import com.preethzcodez.ecommerceexample.pojo.Variant;
-
-import java.util.List;
-
 /**
- * Created by Preeth on 1/3/2018.
+ * Created by Preeth on 1/3/2018
  */
 
 public class Cart {

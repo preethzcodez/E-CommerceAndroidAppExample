@@ -1,7 +1,9 @@
 package com.preethzcodez.ecommerceexample.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,12 +21,13 @@ import com.preethzcodez.ecommerceexample.MainActivity;
 import com.preethzcodez.ecommerceexample.R;
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
 import com.preethzcodez.ecommerceexample.database.SessionManager;
+import com.preethzcodez.ecommerceexample.interfaces.FinishActivity;
 import com.preethzcodez.ecommerceexample.pojo.User;
 import com.preethzcodez.ecommerceexample.utils.Constants;
 import com.preethzcodez.ecommerceexample.utils.Util;
 
 /**
- * Created by Preeth on 1/6/2018.
+ * Created by Preeth on 1/6/2018
  */
 
 public class SignUp extends Fragment {
@@ -33,10 +36,17 @@ public class SignUp extends Fragment {
     Button signUp;
     ImageView back, showpassword;
     boolean isPasswordShown = false;
+    FinishActivity finishActivityCallback;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        finishActivityCallback = (FinishActivity) context;
+    }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.sign_up, container, false);
 
@@ -48,19 +58,20 @@ public class SignUp extends Fragment {
 
     // Set Ids
     private void setIds(View view) {
-        name = (EditText) view.findViewById(R.id.name);
-        email = (EditText) view.findViewById(R.id.email);
-        password = (EditText) view.findViewById(R.id.password);
-        mobile = (EditText) view.findViewById(R.id.mobile);
-        signUp = (Button) view.findViewById(R.id.signup);
-        back = (ImageView) view.findViewById(R.id.back);
-        showpassword = (ImageView) view.findViewById(R.id.showpassword);
+        name = view.findViewById(R.id.name);
+        email = view.findViewById(R.id.email);
+        password = view.findViewById(R.id.password);
+        mobile = view.findViewById(R.id.mobile);
+        signUp = view.findViewById(R.id.signup);
+        back = view.findViewById(R.id.back);
+        showpassword = view.findViewById(R.id.showpassword);
     }
 
     // Set Click Listeners
     private void setClickListeners() {
         // Sign Up
         signUp.setOnClickListener(new View.OnClickListener() {
+            @SuppressWarnings("ConstantConditions")
             @Override
             public void onClick(View view) {
 
@@ -90,36 +101,39 @@ public class SignUp extends Fragment {
                                         // Load Main Activity
                                         Intent i = new Intent(getActivity(), MainActivity.class);
                                         startActivity(i);
-                                        getActivity().finish();
+                                        finishActivityCallback.finishActivity();
                                     } else {
                                         showErrorToastEmailExists();
                                     }
 
                                 } else {
-                                    showErrorToast("Password");
+                                    showErrorToast(getActivity().getResources().getString(R.string.password));
                                 }
                             } else {
-                                showErrorToast("Mobile Number");
+                                showErrorToast(getActivity().getResources().getString(R.string.mobile));
                             }
                         } else {
                             showErrorToastEmailNotValid();
                         }
                     } else {
-                        showErrorToast("Email Id");
+                        showErrorToast(getActivity().getResources().getString(R.string.email));
                     }
                 } else {
-                    showErrorToast("Full Name");
+                    showErrorToast(getActivity().getResources().getString(R.string.name));
                 }
             }
         });
 
         // Back Button Click
         back.setOnClickListener(new View.OnClickListener() {
+            @SuppressWarnings("ConstantConditions")
             @Override
             public void onClick(View view) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 FragmentTransaction ft = fm.beginTransaction();
-                ft.remove(fm.findFragmentById(R.id.fragment));
+                ft.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right);
+                ft.replace(R.id.fragment, new BlankFragment());
+                ft.addToBackStack(null);
                 ft.commit();
             }
         });
@@ -143,7 +157,7 @@ public class SignUp extends Fragment {
 
     // Show Error Toast
     private void showErrorToast(String value) {
-        Toast.makeText(getActivity(), value + R.string.BlankError, Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), value + getResources().getString(R.string.BlankError), Toast.LENGTH_LONG).show();
     }
 
     // Show Error Toast - Email Not Valid

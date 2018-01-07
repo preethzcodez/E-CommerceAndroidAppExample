@@ -21,7 +21,7 @@ import java.util.List;
 import static com.preethzcodez.ecommerceexample.utils.Util.formatDouble;
 
 /**
- * Created by Preeth on 1/4/2018.
+ * Created by Preeth on 1/4/2018
  */
 
 public class DB_Handler extends SQLiteOpenHelper {
@@ -38,7 +38,6 @@ public class DB_Handler extends SQLiteOpenHelper {
     private static final String SUB_ID = "subcategory_id";
     private static final String PDT_ID = "product_id";
     private static final String VAR_ID = "variant_id";
-    private static final String ADDR_ID = "address_id";
     private static final String NAME = "name";
     private static final String DATE = "added_on";
     private static final String SIZE = "size";
@@ -49,10 +48,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     private static final String EMAIL = "email";
     private static final String PASSWORD = "password";
     private static final String MOBILE = "mobile_no";
-    private static final String ADDRESS_LINE1 = "address_line1";
-    private static final String ADDRESS_LINE2 = "address_line2";
-    private static final String PIN = "pin";
-    public static final String QUANTITY = "quantity";
+    private static final String QUANTITY = "quantity";
     public static final String VIEW_COUNT = "view_count";
     public static final String ORDER_COUNT = "order_count";
     public static final String SHARE_COUNT = "share_count";
@@ -296,80 +292,10 @@ public class DB_Handler extends SQLiteOpenHelper {
         db.close();
     }
 
-    // Get Item Count - Product Table
-    public int getItemCount() {
-        String countQuery = "SELECT  * FROM " + ProductsTable;
-        SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery(countQuery, null);
-        int count = cursor.getCount();
-        cursor.close();
-        db.close();
-
-        // return count
-        return count;
-    }
-
-    /*// Get Products List
-    public List<Product> getProductsList(int sortById, int cat_id) {
-        List<Product> productList = new ArrayList<Product>();
-
-        // Create Query According To Sort By
-        String selectQuery = "SELECT  * FROM " + ProductsTable;
-        if (cat_id > 0) {
-            selectQuery = selectQuery + " WHERE " + CAT_ID + "=?";
-        }
-        switch (sortById) {
-            case 0: // Most Recent
-                selectQuery = selectQuery + " ORDER BY date(" + DATE + ") DESC";
-                break;
-
-            case 1: // Most Orders
-                selectQuery = selectQuery + " ORDER BY " + ORDER_COUNT + " DESC";
-                break;
-
-            case 2: // Most Shares
-                selectQuery = selectQuery + " ORDER BY " + SHARE_COUNT + " DESC";
-                break;
-
-            case 3: // Most Viewed
-                selectQuery = selectQuery + " ORDER BY " + VIEW_COUNT + " DESC";
-                break;
-        }
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = null;
-        if (cat_id > 0) {
-            cursor = db.rawQuery(selectQuery, new String[]{String.valueOf(cat_id)});
-        } else {
-            cursor = db.rawQuery(selectQuery, null);
-        }
-
-        // looping through all rows and adding to list
-        if (cursor.moveToFirst()) {
-            do {
-                Product product = new Product();
-                int id = cursor.getInt(cursor.getColumnIndex(ID));
-                product.setId(id);
-                product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
-
-                // Get Price Range
-                String priceRange = getProductPriceRangeById(id);
-                product.setPrice_range(priceRange);
-
-                // Adding product to list
-                productList.add(product);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-
-        // return products list
-        return productList;
-    }*/
-
     // Get Products List By Selected Filters
     public List<Product> getProductsList(int sortById, List<String> sizes, List<String> colors, int cat_id, String email) {
         List<String> productIdList = new ArrayList<>();
-        List<Product> productList = new ArrayList<Product>();
+        List<Product> productList = new ArrayList<>();
 
         // Create Query According To Filter
         String selectQuery = "SELECT DISTINCT " + PDT_ID + " FROM " + VariantsTable;
@@ -469,7 +395,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
     // Get Category List
     public List<Category> getCategoryList() {
-        List<Category> categoryList = new ArrayList<Category>();
+        List<Category> categoryList = new ArrayList<>();
 
         // Select All Query
         String selectQuery = "SELECT * FROM " + CategoriesTable;
@@ -505,7 +431,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
     // Get Subcategory By Category Id
     public List<Category> getSubcategoryList(int id) {
-        List<Category> subcategoryList = new ArrayList<Category>();
+        List<Category> subcategoryList = new ArrayList<>();
 
         // Select Subcategories
         String selectQuery = "SELECT  " + SUB_ID + " FROM " + SubCategoriesMappingTable + " WHERE " + CAT_ID + "=?";
@@ -620,7 +546,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
     // Get Product Size By Id
     public List<String> getSizeByProductId(int id) {
-        List<String> sizeList = new ArrayList<String>();
+        List<String> sizeList = new ArrayList<>();
 
         // Select All Query
         String selectQuery = "SELECT DISTINCT " + SIZE + " FROM " + VariantsTable + " WHERE " + PDT_ID + "=?";
@@ -646,7 +572,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
     // Get Product Color By Size And Id
     public List<String> getColorBySelectedSize(int id, String size) {
-        List<String> colorList = new ArrayList<String>();
+        List<String> colorList = new ArrayList<>();
 
         // Select All Query
         String selectQuery = "SELECT DISTINCT " + COLOR + " FROM " + VariantsTable + " WHERE " + PDT_ID + "=? AND " + SIZE + "=?";
@@ -670,7 +596,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
     // Get Product Colors Id
     public List<String> getProductColorsById(int id) {
-        List<String> colorList = new ArrayList<String>();
+        List<String> colorList = new ArrayList<>();
 
         // Select All Query
         String selectQuery = "SELECT DISTINCT " + COLOR + " FROM " + VariantsTable + " WHERE " + PDT_ID + "=?";
@@ -725,7 +651,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
     // Get Product Variant By Id, Size, Color
     public Variant getProductVariant(int id, String size, String color) {
-        double price = 0;
+        double price;
 
         Variant variant = new Variant();
 
@@ -760,7 +686,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
     // Get All Colors
     public List<String> getAllColors() {
-        List<String> colorList = new ArrayList<String>();
+        List<String> colorList = new ArrayList<>();
 
         // Select Query
         String selectQuery = "SELECT DISTINCT " + COLOR + " FROM " + VariantsTable;
@@ -784,7 +710,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
     // Get All Sizes
     public List<String> getAllSizes() {
-        List<String> sizeList = new ArrayList<String>();
+        List<String> sizeList = new ArrayList<>();
 
         // Select Query
         String selectQuery = "SELECT DISTINCT " + SIZE + " FROM " + VariantsTable;
@@ -866,7 +792,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
     // Get Shopping Cart Items
     public List<Cart> getCartItems(String email) {
-        List<Cart> shoppingCart = new ArrayList<Cart>();
+        List<Cart> shoppingCart = new ArrayList<>();
 
         // Select All Query
         String selectQuery = "SELECT  * FROM " + ShoppingCartTable + " WHERE " + EMAIL + "=?";
@@ -1005,7 +931,7 @@ public class DB_Handler extends SQLiteOpenHelper {
 
     // Get Order History
     public List<Cart> getOrders(String email) {
-        List<Cart> shoppingCart = new ArrayList<Cart>();
+        List<Cart> shoppingCart = new ArrayList<>();
 
         // Select All Query
         String selectQuery = "SELECT  * FROM " + OrderHistoryTable + " WHERE " + EMAIL + "=?";

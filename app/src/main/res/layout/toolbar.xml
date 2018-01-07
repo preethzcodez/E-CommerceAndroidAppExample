@@ -16,10 +16,11 @@
         <ImageView
             android:id="@+id/backButton"
             android:layout_width="56dp"
-            android:visibility="invisible"
+            android:layout_marginLeft="-16dp"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:clickable="true"
+            android:visibility="invisible"
             android:focusable="true"
             android:focusableInTouchMode="false"
             android:scaleType="center"

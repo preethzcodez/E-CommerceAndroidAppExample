@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitBuilder {
 
-    Context context;
+    private Context context;
 
     public RetrofitBuilder(Context context) {
         this.context = context;

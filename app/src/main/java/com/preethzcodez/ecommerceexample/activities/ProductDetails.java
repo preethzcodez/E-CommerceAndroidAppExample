@@ -1,5 +1,6 @@
 package com.preethzcodez.ecommerceexample.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,7 +26,7 @@ import org.apmem.tools.layouts.FlowLayout;
 import java.util.List;
 
 /**
- * Created by Preeth on 1/3/2018.
+ * Created by Preeth on 1/3/2018
  */
 
 public class ProductDetails extends AppCompatActivity {
@@ -44,7 +45,7 @@ public class ProductDetails extends AppCompatActivity {
     FlowLayout colorsLay, sizeLay;
     TextView price, quantityValue;
     ImageView minus, plus;
-    Button cart;
+    Button cart, buyNow;
     SessionManager sessionManager;
     int cartCount = 0;
     Toolbar toolbar;
@@ -55,12 +56,22 @@ public class ProductDetails extends AppCompatActivity {
         setContentView(R.layout.product_detail);
 
         // Set Toolbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // Hide Title
-        TextView titleToolbar = (TextView) findViewById(R.id.titleToolbar);
+        TextView titleToolbar = findViewById(R.id.titleToolbar);
         titleToolbar.setVisibility(View.GONE);
+
+        // Back Button
+        ImageView backButton = findViewById(R.id.backButton);
+        backButton.setVisibility(View.VISIBLE);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         // Get User Email
         sessionManager = new SessionManager(this);
@@ -82,27 +93,28 @@ public class ProductDetails extends AppCompatActivity {
 
     // Set Ids
     private void setIds() {
-        cart = (Button) findViewById(R.id.cartButton);
-        colorParentLay = (LinearLayout) findViewById(R.id.colorParentLay);
-        sizeParentLay = (LinearLayout) findViewById(R.id.sizeParentLay);
-        colorsLay = (FlowLayout) findViewById(R.id.colorsLay);
-        sizeLay = (FlowLayout) findViewById(R.id.sizesLay);
-        price = (TextView) findViewById(R.id.price);
-        quantityValue = (TextView) findViewById(R.id.quantityValue);
-        minus = (ImageView) findViewById(R.id.minus);
-        plus = (ImageView) findViewById(R.id.plus);
+        buyNow = findViewById(R.id.buyNow);
+        cart = findViewById(R.id.cartButton);
+        colorParentLay = findViewById(R.id.colorParentLay);
+        sizeParentLay = findViewById(R.id.sizeParentLay);
+        colorsLay = findViewById(R.id.colorsLay);
+        sizeLay = findViewById(R.id.sizesLay);
+        price = findViewById(R.id.price);
+        quantityValue = findViewById(R.id.quantityValue);
+        minus = findViewById(R.id.minus);
+        plus = findViewById(R.id.plus);
     }
 
     // Set Toolbar Icons Click Listeners
     private void setToolbarIconsClickListeners() {
-        ImageView cart = (ImageView) findViewById(R.id.cart);
+        ImageView cart = findViewById(R.id.cart);
         cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (cartCount > 0) {
                     startActivity(new Intent(getApplicationContext(), ShoppingCart.class));
                 } else {
-                    Toast.makeText(getApplicationContext(), "Cart Is Empty", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.cart_empty, Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -113,36 +125,57 @@ public class ProductDetails extends AppCompatActivity {
         cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                try {
-                    // Get Selected Item Price
-                    if (selectedSize.equals("-") || selectedSize != null) {
-                        if (selectedColor != null) {
-                            long result = db_handler.insertIntoCart(product.getId(), selectedItemVariantId, selectedItemQuantity, userEmail);
-                            if (result > 0) {
-                                Toast.makeText(getApplicationContext(), "Successfully Added", Toast.LENGTH_LONG).show();
-                                updateCartCount();
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Item Already Added", Toast.LENGTH_LONG).show();
-                            }
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Please Select Color", Toast.LENGTH_LONG).show();
-                        }
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Please Select Size", Toast.LENGTH_LONG).show();
-                    }
-                } catch (NullPointerException e) {
-                    Toast.makeText(getApplicationContext(), "Please Select Size", Toast.LENGTH_LONG).show();
+                if (isSuccessAddingToCart(false)) {
+                    Toast.makeText(getApplicationContext(), R.string.add_success, Toast.LENGTH_LONG).show();
+                    updateCartCount();
                 }
             }
         });
+
+        // Buy Now
+        buyNow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isSuccessAddingToCart(true)) {
+                    startActivity(new Intent(getApplicationContext(), ShoppingCart.class));
+                    overridePendingTransition(0, 0);
+                }
+            }
+        });
+    }
+
+    // Get Item Adding To Cart Status
+    private boolean isSuccessAddingToCart(boolean isBuyNow) {
+        try {
+            // Get Selected Item Price
+            if (selectedSize.equals("-") || selectedSize != null) {
+                if (selectedColor != null) {
+                    long result = db_handler.insertIntoCart(product.getId(), selectedItemVariantId, selectedItemQuantity, userEmail);
+                    if (result > 0 || isBuyNow) {
+                        return true;
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.item_exists, Toast.LENGTH_LONG).show();
+                        return false;
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.color_select, Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.size_select, Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } catch (NullPointerException e) {
+            Toast.makeText(getApplicationContext(), R.string.size_select, Toast.LENGTH_LONG).show();
+            return false;
+        }
     }
 
     // Set Values
     private void setValues() {
 
         // WishList Icon
-        final ImageView heart = (ImageView) findViewById(R.id.heart);
+        final ImageView heart = findViewById(R.id.heart);
         if (product.getShortlisted()) {
             heart.setImageResource(R.drawable.ic_heart_grey);
         }
@@ -156,20 +189,20 @@ public class ProductDetails extends AppCompatActivity {
                     heart.setImageResource(R.drawable.ic_heart_grey);
                     if (db_handler.shortlistItem(product.getId(), userEmail) > 0) {
                         product.setShortlisted(true);
-                        Toast.makeText(getApplicationContext(), "Item Added To Wish List", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), R.string.item_add_wishlist, Toast.LENGTH_LONG).show();
                     }
                 } else {
                     heart.setImageResource(R.drawable.ic_heart_grey600_24dp);
                     if (db_handler.removeShortlistedItem(product.getId(), userEmail)) {
                         product.setShortlisted(false);
-                        Toast.makeText(getApplicationContext(), "Item Removed From Wish List", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), R.string.item_rem_wishlist, Toast.LENGTH_LONG).show();
                     }
                 }
             }
         });
 
         // Title
-        TextView Title = (TextView) findViewById(R.id.title);
+        TextView Title = findViewById(R.id.title);
         Title.setText(product.getName());
 
         // Size
@@ -299,6 +332,7 @@ public class ProductDetails extends AppCompatActivity {
 
                     // Size Click Listener
                     color.setOnClickListener(new View.OnClickListener() {
+                        @SuppressLint("SetTextI18n")
                         @Override
                         public void onClick(View view) {
 
@@ -322,10 +356,10 @@ public class ProductDetails extends AppCompatActivity {
                                     price.setText("Rs." + selectedItemPrice);
                                     setColorLayout(colorList); // reload to refresh background
                                 } else {
-                                    Toast.makeText(getApplicationContext(), "Please Select Size", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), R.string.size_select, Toast.LENGTH_LONG).show();
                                 }
                             } catch (NullPointerException e) {
-                                Toast.makeText(getApplicationContext(), "Please Select Size", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), R.string.size_select, Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -371,12 +405,18 @@ public class ProductDetails extends AppCompatActivity {
     // Update Cart Item Count In Toolbar
     private void updateCartCount() {
         cartCount = db_handler.getCartItemCount(sessionManager.getSessionData(Constants.SESSION_EMAIL));
-        TextView count = (TextView) findViewById(R.id.count);
+        TextView count = findViewById(R.id.count);
         if (cartCount > 0) {
             count.setVisibility(View.VISIBLE);
             count.setText(String.valueOf(cartCount));
         } else {
             count.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(0, 0);
     }
 }

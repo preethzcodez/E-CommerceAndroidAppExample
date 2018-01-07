@@ -1,5 +1,6 @@
 package com.preethzcodez.ecommerceexample.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -10,23 +11,21 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.preethzcodez.ecommerceexample.R;
 import com.preethzcodez.ecommerceexample.activities.ProductDetails;
-import com.preethzcodez.ecommerceexample.database.DB_Handler;
 import com.preethzcodez.ecommerceexample.pojo.Cart;
 import com.preethzcodez.ecommerceexample.utils.Util;
 
 import java.util.List;
 
 /**
- * Created by Preeth on 1/7/2018.
+ * Created by Preeth on 1/7/2018
  */
 
 public class MyOrdersAdapter extends BaseAdapter {
 
-    Context context;
+    private Context context;
     private LayoutInflater inflater;
     private List<Cart> shoppingCart;
 
@@ -52,6 +51,7 @@ public class MyOrdersAdapter extends BaseAdapter {
         return i;
     }
 
+    @SuppressLint({"ViewHolder", "SetTextI18n", "InflateParams"})
     @Override
     public View getView(final int position, View view, ViewGroup viewGroup) {
         // TODO Auto-generated method stub
@@ -59,21 +59,21 @@ public class MyOrdersAdapter extends BaseAdapter {
         View rowView;
 
         rowView = inflater.inflate(R.layout.shoppingcart_item, null);
-        holder.title = (TextView) rowView.findViewById(R.id.title);
-        holder.size = (TextView) rowView.findViewById(R.id.size);
-        holder.color = (TextView) rowView.findViewById(R.id.color);
-        holder.price = (TextView) rowView.findViewById(R.id.price);
-        holder.tax = (TextView) rowView.findViewById(R.id.tax);
-        holder.qty = (TextView) rowView.findViewById(R.id.quantity);
-        holder.remove = (ImageView) rowView.findViewById(R.id.remove);
-        holder.qtyLay = (LinearLayout) rowView.findViewById(R.id.qtyLay);
+        holder.title = rowView.findViewById(R.id.title);
+        holder.size = rowView.findViewById(R.id.size);
+        holder.color = rowView.findViewById(R.id.color);
+        holder.price = rowView.findViewById(R.id.price);
+        holder.tax = rowView.findViewById(R.id.tax);
+        holder.qty = rowView.findViewById(R.id.quantity);
+        holder.remove = rowView.findViewById(R.id.remove);
+        holder.qtyLay = rowView.findViewById(R.id.qtyLay);
 
         holder.title.setText(shoppingCart.get(position).getProduct().getName());
         holder.color.setText("Color: " + shoppingCart.get(position).getVariant().getColor());
 
         String size = String.valueOf(shoppingCart.get(position).getVariant().getSize());
         try {
-            if (size != null && !size.equalsIgnoreCase("null")) {
+            if (size != null && !size.equalsIgnoreCase("null") && !size.equalsIgnoreCase("0.0")) {
                 holder.size.setText("Size: " + size);
             } else {
                 holder.size.setVisibility(View.GONE);
@@ -95,7 +95,7 @@ public class MyOrdersAdapter extends BaseAdapter {
 
 
         // Product Item Click
-        holder.itemLay = (RelativeLayout) rowView.findViewById(R.id.itemLay);
+        holder.itemLay = rowView.findViewById(R.id.itemLay);
         holder.itemLay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
