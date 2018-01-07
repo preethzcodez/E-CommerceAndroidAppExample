@@ -64,7 +64,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     private static final String SubCategoriesMappingTable = "subcategories_mapping";
     private static final String ProductsTable = "products";
     private static final String VariantsTable = "variants";
-    private static final String AddressTable = "address_book";
+    private static final String WishListTable = "wishlist";
     private static final String OrderHistoryTable = "order_history";
     private static final String ShoppingCartTable = "shopping_cart";
 
@@ -74,15 +74,6 @@ public class DB_Handler extends SQLiteOpenHelper {
             + NAME + " TEXT NOT NULL,"
             + MOBILE + " TEXT NOT NULL,"
             + PASSWORD + " TEXT NOT NULL" + ")";
-
-    // Create Address Book Table
-    private static final String CREATE_ADDRESS_BOOK = "CREATE TABLE " + AddressTable + "("
-            + ID + " INTEGER PRIMARY KEY,"
-            + NAME + " TEXT NOT NULL,"
-            + ADDRESS_LINE1 + " TEXT NOT NULL,"
-            + ADDRESS_LINE2 + " TEXT,"
-            + MOBILE + " TEXT,"
-            + PIN + " TEXT NOT NULL" + ")";
 
     // Create Categories Table
     private static final String CREATE_CATEGORIES_TABLE = "CREATE TABLE " + CategoriesTable + "("
@@ -131,6 +122,12 @@ public class DB_Handler extends SQLiteOpenHelper {
             + QUANTITY + " INTEGER NOT NULL,"
             + EMAIL + " TEXT NOT NULL" + ")";
 
+    // Create Wish List Table
+    private static final String CREATE_WISHLIST_TABLE = "CREATE TABLE " + WishListTable + "("
+            + ID + " INTEGER PRIMARY KEY,"
+            + PDT_ID + " INTEGER NOT NULL,"
+            + EMAIL +" TEXT NOT NULL"+")";
+
     public DB_Handler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -143,9 +140,9 @@ public class DB_Handler extends SQLiteOpenHelper {
         db.execSQL(CREATE_PRODUCTS_TABLE);
         db.execSQL(CREATE_VARIANTS_TABLE);
         db.execSQL(CREATE_SUBCATEGORIES_MAPPING_TABLE);
-        db.execSQL(CREATE_ADDRESS_BOOK);
         db.execSQL(CREATE_ORDER_HISTORY_TABLE);
         db.execSQL(CREATE_SHOPPING_CART_TABLE);
+        db.execSQL(CREATE_WISHLIST_TABLE);
     }
 
     // Upgrading database
@@ -157,9 +154,9 @@ public class DB_Handler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + ProductsTable);
         db.execSQL("DROP TABLE IF EXISTS " + VariantsTable);
         db.execSQL("DROP TABLE IF EXISTS " + SubCategoriesMappingTable);
-        db.execSQL("DROP TABLE IF EXISTS " + AddressTable);
         db.execSQL("DROP TABLE IF EXISTS " + OrderHistoryTable);
         db.execSQL("DROP TABLE IF EXISTS " + ShoppingCartTable);
+        db.execSQL("DROP TABLE IF EXISTS " + WishListTable);
 
         // Create tables again
         onCreate(db);
@@ -371,7 +368,7 @@ public class DB_Handler extends SQLiteOpenHelper {
     }*/
 
     // Get Products List By Selected Filters
-    public List<Product> getProductsList(int sortById, List<String> sizes, List<String> colors, int cat_id) {
+    public List<Product> getProductsList(int sortById, List<String> sizes, List<String> colors, int cat_id, String email) {
         List<String> productIdList = new ArrayList<>();
         List<Product> productList = new ArrayList<Product>();
 
@@ -449,6 +446,10 @@ public class DB_Handler extends SQLiteOpenHelper {
                         product.setId(id);
                         product.setName(cursor.getString(cursor.getColumnIndex(NAME)));
 
+                        // Get Item Wish Listed
+                        boolean isShortlisted = isShortlistedItem(id,email);
+                        product.setShortlisted(isShortlisted);
+
                         // Get Price Range
                         String priceRange = getProductPriceRangeById(id);
                         product.setPrice_range(priceRange);
@@ -458,8 +459,8 @@ public class DB_Handler extends SQLiteOpenHelper {
                     } while (cursor.moveToNext());
                 }
             }
-        } catch (Exception ignore) {
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         // return products list
@@ -941,6 +942,69 @@ public class DB_Handler extends SQLiteOpenHelper {
             db.insert(OrderHistoryTable, null, values);
         }
         db.close();
+    }
 
+    // Add Item Into Wish List
+    public long shortlistItem(int pdt_id, String email)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(PDT_ID, pdt_id);
+        values.put(EMAIL, email);
+        return db.insert(WishListTable, null, values);
+    }
+
+    // Remove Item From Wish List
+    public boolean removeShortlistedItem(int pdt_id, String email)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(WishListTable,PDT_ID+"=? AND "+EMAIL+"=?",new String[]{String.valueOf(pdt_id),email}) > 0;
+    }
+
+    // Get Wishlist Items
+    public List<Product> getShortListedItems(String email)
+    {
+        List<Product> productList = new ArrayList<>();
+
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + WishListTable + " WHERE " + EMAIL + "=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{email});
+
+        // looping through all rows and adding to list
+        if (cursor.moveToFirst()) {
+            do {
+                int pdt_id = cursor.getInt(cursor.getColumnIndex(PDT_ID));
+                Product product = getProductDetailsById(pdt_id);
+                String priceRange = getProductPriceRangeById(pdt_id);
+                product.setPrice_range(priceRange);
+
+                // Adding to list
+                productList.add(product);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // return product list
+        return productList;
+    }
+
+    // Check Product In Wish List
+    private boolean isShortlistedItem(int pdt_id,String email)
+    {
+        // Select All Query
+        String selectQuery = "SELECT  * FROM " + WishListTable + " WHERE " + EMAIL + "=? AND "+PDT_ID+"=?";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, new String[]{email, String.valueOf(pdt_id)});
+
+        if (cursor.moveToFirst()) {
+            cursor.close();
+            return true;
+        }
+        return false;
     }
 }

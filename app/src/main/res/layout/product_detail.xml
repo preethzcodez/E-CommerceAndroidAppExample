@@ -4,14 +4,15 @@
     android:layout_height="match_parent"
     android:background="@color/border">
 
-    <include android:id="@+id/toolbar"
-        layout="@layout/toolbar"/>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
 
     <ScrollView
-        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/bottomLay"
+        android:layout_below="@+id/toolbar"
         android:orientation="vertical">
 
         <LinearLayout
@@ -20,18 +21,35 @@
             android:background="@color/white"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/image"
-                android:background="@color/stroke"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="225dp"
-                android:scaleType="center"
-                android:src="@drawable/ic_image_grey600_36dp" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/image"
+                    android:layout_width="match_parent"
+                    android:layout_height="225dp"
+                    android:background="@color/stroke"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_image_grey600_36dp" />
+
+                <ImageView
+                    android:id="@+id/heart"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:focusableInTouchMode="false"
+                    android:layout_width="@dimen/ProductWishIconSize"
+                    android:layout_height="@dimen/ProductWishIconSize"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/defaultMargin"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_heart_grey600_24dp" />
+            </RelativeLayout>
 
             <View
-                android:background="@color/border"
                 android:layout_width="match_parent"
-                android:layout_height="1dp" />
+                android:layout_height="1dp"
+                android:background="@color/border" />
 
             <TextView
                 android:id="@+id/title"
@@ -161,6 +179,7 @@
                     android:focusableInTouchMode="false"
                     android:src="@drawable/ic_plus_circle_outline_grey600_18dp" />
             </LinearLayout>
+
             <include layout="@layout/border" />
         </LinearLayout>
     </ScrollView>
@@ -184,10 +203,10 @@
                 android:layout_marginRight="2dp"
                 android:layout_marginTop="@dimen/halfMargin"
                 android:layout_weight="1"
-                android:textColor="@color/white"
-                android:textSize="@dimen/product_detail_button"
                 android:background="@drawable/rounded_corner"
-                android:text="@string/cart" />
+                android:text="@string/cart"
+                android:textColor="@color/white"
+                android:textSize="@dimen/product_detail_button" />
 
             <Button
                 android:layout_width="0dp"
@@ -196,11 +215,11 @@
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="@dimen/halfMargin"
                 android:layout_marginTop="@dimen/halfMargin"
-                android:textSize="@dimen/product_detail_button"
-                android:textColor="@color/white"
                 android:layout_weight="1"
                 android:background="@drawable/rounded_corner_blue"
-                android:text="@string/buy" />
+                android:text="@string/buy"
+                android:textColor="@color/white"
+                android:textSize="@dimen/product_detail_button" />
         </TableRow>
     </TableLayout>
 </RelativeLayout>

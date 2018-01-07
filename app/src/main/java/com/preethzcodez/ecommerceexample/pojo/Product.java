@@ -27,6 +27,16 @@ public class Product implements Serializable {
     @Expose
     private String price_range;
 
+    private Boolean isShortlisted = false;
+
+    public Boolean getShortlisted() {
+        return isShortlisted;
+    }
+
+    public void setShortlisted(Boolean shortlisted) {
+        isShortlisted = shortlisted;
+    }
+
     public Integer getId() {
         return id;
     }

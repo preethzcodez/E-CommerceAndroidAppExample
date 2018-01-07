@@ -22,6 +22,7 @@ import com.preethzcodez.ecommerceexample.adapters.FilterItemListAdapter;
 import com.preethzcodez.ecommerceexample.adapters.ProductListAdapter;
 import com.preethzcodez.ecommerceexample.adapters.SortItemListAdapter;
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
+import com.preethzcodez.ecommerceexample.database.SessionManager;
 import com.preethzcodez.ecommerceexample.pojo.Product;
 import com.preethzcodez.ecommerceexample.utils.Constants;
 
@@ -104,8 +105,9 @@ public class Products extends Fragment {
                         sortByText.setText(sortByArray[sortById]);
 
                         // Reload Products List
+                        SessionManager sessionManager = new SessionManager(getActivity());
                         DB_Handler db_handler = new DB_Handler(getActivity());
-                        fillGridView(db_handler.getProductsList(sortById, sizeFilter, colorFilter, cat_id));
+                        fillGridView(db_handler.getProductsList(sortById, sizeFilter, colorFilter, cat_id,sessionManager.getSessionData(Constants.SESSION_EMAIL)));
                         dialog.dismiss();
                     }
                 });
@@ -180,8 +182,9 @@ public class Products extends Fragment {
                     public void onClick(View view) {
 
                         // Reload Products List By Filter
+                        SessionManager sessionManager = new SessionManager(getActivity());
                         DB_Handler db_handler = new DB_Handler(getActivity());
-                        fillGridView(db_handler.getProductsList(sortById, sizeFilter, colorFilter, cat_id));
+                        fillGridView(db_handler.getProductsList(sortById, sizeFilter, colorFilter, cat_id,sessionManager.getSessionData(Constants.SESSION_EMAIL)));
                         dialog.dismiss();
                     }
                 });

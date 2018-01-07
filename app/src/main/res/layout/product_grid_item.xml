@@ -21,8 +21,13 @@
         android:layout_height="@dimen/ProductImageHeight" />
 
     <ImageView
+        android:id="@+id/heart"
+        android:scaleType="center"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="false"
+        android:src="@drawable/ic_heart_grey600_24dp"
         android:layout_width="@dimen/ProductWishIconSize"
-        android:layout_marginRight="@dimen/defaultMargin"
         android:layout_alignParentRight="true"
         android:layout_height="@dimen/ProductWishIconSize" />
 

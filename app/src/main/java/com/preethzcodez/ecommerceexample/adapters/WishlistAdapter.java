@@ -9,7 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.preethzcodez.ecommerceexample.R;
 import com.preethzcodez.ecommerceexample.activities.ProductDetails;
@@ -21,16 +20,16 @@ import com.preethzcodez.ecommerceexample.utils.Constants;
 import java.util.List;
 
 /**
- * Created by Preeth on 1/4/18
+ * Created by Preeth on 1/7/2018.
  */
 
-public class ProductListAdapter extends BaseAdapter {
+public class WishlistAdapter extends BaseAdapter {
 
     Context context;
     private LayoutInflater inflater;
     private List<Product> productList;
 
-    public ProductListAdapter(Context context, List<Product> productList) {
+    public WishlistAdapter(Context context, List<Product> productList) {
         this.context = context;
         this.productList = productList;
         inflater = (LayoutInflater) context.
@@ -55,15 +54,15 @@ public class ProductListAdapter extends BaseAdapter {
     @Override
     public View getView(final int position, View view, ViewGroup viewGroup) {
         // TODO Auto-generated method stub
-        final Holder holder = new Holder();
+        Holder holder = new Holder();
         View rowView;
 
-        rowView = inflater.inflate(R.layout.product_grid_item, null);
-        holder.name = (TextView) rowView.findViewById(R.id.name);
+        rowView = inflater.inflate(R.layout.wishlist_item, null);
+        holder.title = (TextView) rowView.findViewById(R.id.title);
         holder.price = (TextView) rowView.findViewById(R.id.price);
-        holder.heart = (ImageView) rowView.findViewById(R.id.heart);
+        holder.remove = (ImageView) rowView.findViewById(R.id.remove);
 
-        holder.name.setText(productList.get(position).getName());
+        holder.title.setText(productList.get(position).getName());
         holder.price.setText(productList.get(position).getPrice_range());
 
         // Product Item Click
@@ -77,29 +76,16 @@ public class ProductListAdapter extends BaseAdapter {
             }
         });
 
-        if (productList.get(position).getShortlisted()) {
-            holder.heart.setImageResource(R.drawable.ic_heart_grey);
-        }
-
         // Wish List Item Click
-        holder.heart.setOnClickListener(new View.OnClickListener() {
+        holder.remove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Add / Remove Item To Wish List
+                // Remove Item From Wish List
                 DB_Handler db_handler = new DB_Handler(context);
                 SessionManager sessionManager = new SessionManager(context);
-                if (!productList.get(position).getShortlisted()) {
-                    holder.heart.setImageResource(R.drawable.ic_heart_grey);
-                    if (db_handler.shortlistItem(productList.get(position).getId(), sessionManager.getSessionData(Constants.SESSION_EMAIL)) > 0) {
-                        productList.get(position).setShortlisted(true);
-                        Toast.makeText(context, "Item Added To Wish List", Toast.LENGTH_LONG).show();
-                    }
-                } else {
-                    holder.heart.setImageResource(R.drawable.ic_heart_grey600_24dp);
-                    if (db_handler.removeShortlistedItem(productList.get(position).getId(), sessionManager.getSessionData(Constants.SESSION_EMAIL))) {
-                        productList.get(position).setShortlisted(false);
-                        Toast.makeText(context, "Item Removed From Wish List", Toast.LENGTH_LONG).show();
-                    }
+                if (db_handler.removeShortlistedItem(productList.get(position).getId(), sessionManager.getSessionData(Constants.SESSION_EMAIL))) {
+                    productList.remove(position);
+                    notifyDataSetChanged();
                 }
             }
         });
@@ -109,7 +95,7 @@ public class ProductListAdapter extends BaseAdapter {
 
     public class Holder {
         RelativeLayout itemLay;
-        TextView name, price;
-        ImageView heart;
+        TextView title, price;
+        ImageView remove;
     }
 }

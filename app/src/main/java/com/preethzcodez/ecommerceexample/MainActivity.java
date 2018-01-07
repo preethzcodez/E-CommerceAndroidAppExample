@@ -20,6 +20,7 @@ import com.preethzcodez.ecommerceexample.database.SessionManager;
 import com.preethzcodez.ecommerceexample.fragments.Account;
 import com.preethzcodez.ecommerceexample.fragments.Categories;
 import com.preethzcodez.ecommerceexample.fragments.Products;
+import com.preethzcodez.ecommerceexample.fragments.WishList;
 import com.preethzcodez.ecommerceexample.pojo.Product;
 import com.preethzcodez.ecommerceexample.utils.Constants;
 
@@ -99,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
                     return true;
 
                 case R.id.nav_shortlist: // Wish List
+                    ft.replace(R.id.content, new WishList());
+                    ft.commit();
                     titleToolbar.setText("Wish List");
                     return true;
 
@@ -115,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
     // call products fragment
     private void callProductsFragment() {
         // get product list
-        List<Product> productList = db_handler.getProductsList(0, null, null, 0);
+        List<Product> productList = db_handler.getProductsList(0, null, null, 0,sessionManager.getSessionData(Constants.SESSION_EMAIL));
 
         Bundle args = new Bundle();
         args.putInt(Constants.CAT_ID_KEY, 0);

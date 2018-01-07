@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.preethzcodez.ecommerceexample.MainActivity;
 import com.preethzcodez.ecommerceexample.R;
 import com.preethzcodez.ecommerceexample.database.DB_Handler;
+import com.preethzcodez.ecommerceexample.database.SessionManager;
 import com.preethzcodez.ecommerceexample.fragments.Products;
 import com.preethzcodez.ecommerceexample.fragments.Subcategories;
 import com.preethzcodez.ecommerceexample.pojo.Category;
@@ -92,10 +93,11 @@ public class SubcategoryGridAdapter extends BaseAdapter {
                     ft.commit();
                 } else {
                     // get products list by category
-                    List<Product> productsList = db_handler.getProductsList(0,null,null,id);
+                    SessionManager sessionManager = new SessionManager(context);
+                    List<Product> productsList = db_handler.getProductsList(0, null, null, id, sessionManager.getSessionData(Constants.SESSION_EMAIL));
 
                     // add bundle arguments
-                    bundle.putInt(Constants.CAT_ID_KEY,id);
+                    bundle.putInt(Constants.CAT_ID_KEY, id);
                     bundle.putSerializable(Constants.PDT_KEY, (Serializable) productsList);
 
                     Products products = new Products();
