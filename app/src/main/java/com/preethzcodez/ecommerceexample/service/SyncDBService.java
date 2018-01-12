@@ -173,6 +173,7 @@ public class SyncDBService extends IntentService {
             }
 
             reply("success");
+            Log.i("DB Sync","success");
         } catch (Exception e) {
             e.printStackTrace();
         }

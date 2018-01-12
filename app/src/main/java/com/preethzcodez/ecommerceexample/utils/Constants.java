@@ -7,7 +7,7 @@ package com.preethzcodez.ecommerceexample.utils;
 public class Constants {
 
     // App Base URL
-    public static final String BASE_URL = "https://stark-spire-93433.herokuapp.com/";
+    public static final String BASE_URL = "https://firebasestorage.googleapis.com/v0/b/e-shoppe-1aa36.appspot.com/o/";
 
     // Bundle Argument Keys
     public static final String CAT_ID_KEY = "category_id";
