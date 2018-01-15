@@ -5,6 +5,7 @@
 * Dynamic Web API
 * Pagination (List / Grid - Scroll To Load More)
 * Payment Gateway
+* Products Search
 
 # Screenshots
 ### Home Page
