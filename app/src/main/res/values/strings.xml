@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">ECommerceExample</string>
-    <string name="splash_text">e - Shopping</string>
+    <string name="app_name">e - Commerce Demo</string>
+    <string name="splash_text">e - Shoppe</string>
     
     <!-- Error Messages -->
     <string name="NoInternet">Please check your internet connection</string>
