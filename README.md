@@ -3,7 +3,8 @@
 * Order Review
 * Images
 * Dynamic Web API
-* Pagination
+* Pagination (List / Grid - Scroll To Load More)
+* Payment Gateway
 
 # Screenshots
 ### Home Page
