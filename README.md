@@ -1,3 +1,12 @@
+## What Is Not Done
+* Address Management
+* Order Review
+* Images
+* Dynamic Web API
+* Pagination (List / Grid - Scroll To Load More)
+* Payment Gateway
+* Products Search
+
 # Screenshots
 ### Home Page
 <img src = "https://github.com/preethzcodez/E-CommerceAndroidAppExample/blob/master/screenshots/Screenshot_2018-01-07-19-13-07-964_com.preethzcodez.ecommerceexample.png" height="500"></img><br/><br/>
